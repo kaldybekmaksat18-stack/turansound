@@ -9,8 +9,9 @@
 > ✅ Исправлена ошибка импорта модуля (Failed to fetch)  
 > ✅ Исправлена ошибка связи таблиц (bookings ↔ artists_catalog)  
 > ✅ Исправлена бесконечная рекурсия в RLS политиках  
+> ✅ **Исправлена проблема с CSS/Tailwind в production**  
 > 🚀 **НОВОЕ: Готов к деплою на Vercel/Netlify!**  
-> 📄 Детали: [LATEST_FIXES.md](./LATEST_FIXES.md) | [Гайд по деплою](./DEPLOYMENT_GUIDE.md)
+> 📄 Детали: [LATEST_FIXES.md](./LATEST_FIXES.md) | [CSS_FIX.md](./CSS_FIX.md) | [Гайд по деплою](./DEPLOYMENT_GUIDE.md)
 
 ## 🌟 О проекте
 
@@ -166,7 +167,7 @@ git init && git add . && git commit -m "Initial commit"
 │   ├── FinancialProfile.tsx         # Финансовый кабинет
 │   ├── ContractsLegal.tsx           # Юридические шаблоны
 │   └── ReputationSystem.tsx         # Репутация и отзывы
-│
+���
 ├── pages/
 │   ├── HomePage.tsx                 # Главная страница (с баннером продакшн)
 │   ├── CatalogPage.tsx              # Каталог с фильтрами
@@ -390,7 +391,7 @@ transactions (
 
 ## 🙏 Благодарности
 
-Спасибо всем артистам Центральной Азии, которые вдохнови��и нас на создание этой платформы!
+Спасибо всем артистам Центральной Азии, которые вдохновили нас на создание этой платформы!
 
 ---
 

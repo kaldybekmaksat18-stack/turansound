@@ -10,9 +10,13 @@ export default defineConfig({
       '@': path.resolve(__dirname, './'),
     },
   },
+  css: {
+    postcss: './postcss.config.js',
+  },
   build: {
     outDir: 'dist',
     sourcemap: false,
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         manualChunks: {
