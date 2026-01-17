@@ -14,6 +14,7 @@ import {
   EventFormat
 } from '../types/artist';
 import { mapArtistsArray } from '../utils/artistMapper';
+import { useTranslation } from '../lib/i18n/LanguageContext';
 
 interface CatalogPageProps {
   onNavigate: (page: string, params?: any) => void;
@@ -33,6 +34,8 @@ interface FilterState {
 }
 
 export function CatalogPage({ onNavigate, initialSection }: CatalogPageProps) {
+  const { t } = useTranslation();
+  
   // Маппим всех артистов в новый формат с section и roles
   const artists = useMemo(() => mapArtistsArray(mockArtists), []);
 
@@ -181,9 +184,9 @@ export function CatalogPage({ onNavigate, initialSection }: CatalogPageProps) {
         />
 
         <div className="mb-8">
-          <h1 className="mb-2">Каталог артистов</h1>
+          <h1 className="mb-2">{t.catalog.title}</h1>
           <p className="text-muted-foreground">
-            Найдено {filteredArtists.length} артистов
+            {filteredArtists.length} {t.catalog.artistsFound}
           </p>
         </div>
 
@@ -226,15 +229,15 @@ export function CatalogPage({ onNavigate, initialSection }: CatalogPageProps) {
             ) : (
               <div className="text-center py-20">
                 <div className="text-6xl mb-4">🎵</div>
-                <h3 className="mb-2">Артисты не найдены</h3>
+                <h3 className="mb-2">{t.catalog.noArtistsFound}</h3>
                 <p className="text-muted-foreground mb-6">
-                  Попробуйте изменить параметры поиска
+                  {t.catalog.subtitle}
                 </p>
                 <button
                   onClick={handleReset}
                   className="text-purple-600 hover:text-purple-700"
                 >
-                  Сбросить фильтры
+                  {t.catalog.clearFilters}
                 </button>
               </div>
             )}

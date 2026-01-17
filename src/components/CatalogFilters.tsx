@@ -25,6 +25,7 @@ import {
   EVENT_FORMAT_LABELS,
   ROLES_BY_SECTION
 } from '../types/artist';
+import { useTranslation } from '../lib/i18n/LanguageContext';
 
 interface FilterState {
   search: string;
@@ -45,6 +46,8 @@ interface CatalogFiltersProps {
 }
 
 export function CatalogFilters({ filters, onFilterChange, onReset }: CatalogFiltersProps) {
+  const { t } = useTranslation();
+
   // Получаем доступные роли для выбранного раздела
   const availableRoles = filters.section !== 'all' 
     ? ROLES_BY_SECTION[filters.section]
@@ -88,19 +91,19 @@ export function CatalogFilters({ filters, onFilterChange, onReset }: CatalogFilt
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="w-5 h-5" />
-          <h3>Фильтры</h3>
+          <h3>{t.catalog.filters}</h3>
         </div>
         <Button variant="ghost" size="sm" onClick={onReset}>
-          Сбросить
+          {t.catalog.reset}
         </Button>
       </div>
 
       {/* Search */}
       <div>
-        <Label htmlFor="search">Поиск</Label>
+        <Label htmlFor="search">{t.catalog.searchLabel}</Label>
         <Input
           id="search"
-          placeholder="Имя артиста..."
+          placeholder={t.catalog.artistNamePlaceholder}
           value={filters.search}
           onChange={(e) => onFilterChange({ search: e.target.value })}
           className="mt-2"
@@ -109,10 +112,10 @@ export function CatalogFilters({ filters, onFilterChange, onReset }: CatalogFilt
 
       {/* СЛОЙ 1: Разделы (КТО) */}
       <div>
-        <Label className="mb-3 block">Раздел</Label>
+        <Label className="mb-3 block">{t.catalog.section}</Label>
         <div className="grid grid-cols-1 gap-2">
           {[
-            { id: 'all' as const, label: 'Все', icon: Filter },
+            { id: 'all' as const, label: t.catalog.all, icon: Filter },
             { id: 'stage_artists' as ArtistSection, label: SECTION_LABELS.stage_artists, icon: Music },
             { id: 'hosts_and_shows' as ArtistSection, label: SECTION_LABELS.hosts_and_shows, icon: Mic },
             { id: 'creative_production' as ArtistSection, label: SECTION_LABELS.creative_production, icon: Film }
@@ -152,7 +155,7 @@ export function CatalogFilters({ filters, onFilterChange, onReset }: CatalogFilt
       {/* СЛОЙ 2: Роли (ЧТО ДЕЛАЮТ) */}
       {filters.section !== 'all' && (
         <div>
-          <Label className="mb-3 block">Роли</Label>
+          <Label className="mb-3 block">{t.catalog.roles}</Label>
           <div className="space-y-2">
             {availableRoles.map((role) => (
               <div
@@ -181,7 +184,7 @@ export function CatalogFilters({ filters, onFilterChange, onReset }: CatalogFilt
 
       {/* СЛОЙ 3: Музыкальные жанры */}
       <div>
-        <Label className="mb-3 block">Жанры</Label>
+        <Label className="mb-3 block">{t.catalog.genres}</Label>
         <div className="flex flex-wrap gap-2">
           {(Object.entries(GENRE_LABELS) as [MusicGenre, string][]).map(([genre, label]) => {
             const isSelected = filters.genres.includes(genre);
@@ -205,7 +208,7 @@ export function CatalogFilters({ filters, onFilterChange, onReset }: CatalogFilt
 
       {/* СЛОЙ 3: Национальные стили */}
       <div>
-        <Label className="mb-3 block">Национальные стили</Label>
+        <Label className="mb-3 block">{t.catalog.nationalStyles}</Label>
         <div className="flex flex-wrap gap-2">
           {(Object.entries(NATIONAL_STYLE_LABELS) as [NationalStyle, string][]).map(([style, label]) => {
             const isSelected = filters.nationalStyles.includes(style);
@@ -229,7 +232,7 @@ export function CatalogFilters({ filters, onFilterChange, onReset }: CatalogFilt
 
       {/* СЛОЙ 3: Форматы мероприятий */}
       <div>
-        <Label className="mb-3 block">Фор��аты мероприятий</Label>
+        <Label className="mb-3 block">{t.catalog.eventFormats}</Label>
         <div className="flex flex-wrap gap-2">
           {(Object.entries(EVENT_FORMAT_LABELS) as [EventFormat, string][]).map(([format, label]) => {
             const isSelected = filters.eventFormats.includes(format);
@@ -253,30 +256,30 @@ export function CatalogFilters({ filters, onFilterChange, onReset }: CatalogFilt
 
       {/* Region */}
       <div>
-        <Label htmlFor="region">Регион</Label>
+        <Label htmlFor="region">{t.catalog.region}</Label>
         <Select
           value={filters.region}
           onValueChange={(value) => onFilterChange({ region: value })}
         >
           <SelectTrigger id="region" className="mt-2">
-            <SelectValue placeholder="Все регионы" />
+            <SelectValue placeholder={t.catalog.allRegions} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Все регионы</SelectItem>
-            <SelectItem value="almaty">Алматы</SelectItem>
-            <SelectItem value="astana">Астана</SelectItem>
-            <SelectItem value="shymkent">Шымкент</SelectItem>
-            <SelectItem value="karaganda">Караганда</SelectItem>
-            <SelectItem value="tashkent">Ташкент</SelectItem>
-            <SelectItem value="bishkek">Бишкек</SelectItem>
-            <SelectItem value="istanbul">Стамбул</SelectItem>
+            <SelectItem value="all">{t.catalog.allRegions}</SelectItem>
+            <SelectItem value="almaty">{t.regions.almaty}</SelectItem>
+            <SelectItem value="astana">{t.regions.astana}</SelectItem>
+            <SelectItem value="shymkent">{t.regions.shymkent}</SelectItem>
+            <SelectItem value="karaganda">{t.regions.karaganda}</SelectItem>
+            <SelectItem value="tashkent">{t.regions.tashkent}</SelectItem>
+            <SelectItem value="bishkek">{t.regions.bishkek}</SelectItem>
+            <SelectItem value="istanbul">{t.regions.istanbul}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {/* Price Range */}
       <div>
-        <Label>Цена (тыс. ₸)</Label>
+        <Label>{t.catalog.priceThousands} ₸</Label>
         <div className="mt-4 mb-2">
           <Slider
             value={filters.priceRange}
@@ -287,15 +290,15 @@ export function CatalogFilters({ filters, onFilterChange, onReset }: CatalogFilt
             className="mb-2"
           />
           <div className="flex justify-between text-sm text-muted-foreground">
-            <span>{filters.priceRange[0]} тыс.</span>
-            <span>{filters.priceRange[1]} тыс.</span>
+            <span>{filters.priceRange[0]} {t.catalog.thousands}.</span>
+            <span>{filters.priceRange[1]} {t.catalog.thousands}.</span>
           </div>
         </div>
       </div>
 
       {/* Rating */}
       <div>
-        <Label>Минимальный рейтинг</Label>
+        <Label>{t.catalog.minRating}</Label>
         <div className="mt-4 mb-2">
           <Slider
             value={[filters.rating]}
@@ -326,16 +329,16 @@ export function CatalogFilters({ filters, onFilterChange, onReset }: CatalogFilt
         filters.priceRange[1] < 3000
       ) && (
         <div>
-          <Label>Активные фильтры</Label>
+          <Label>{t.catalog.activeFilters}</Label>
           <div className="flex flex-wrap gap-2 mt-2">
             {filters.search && (
               <Badge variant="secondary" className="gap-1">
-                Поиск: {filters.search}
+                {t.catalog.searchLabel}: {filters.search}
               </Badge>
             )}
             {filters.section !== 'all' && (
               <Badge variant="secondary">
-                Раздел: {SECTION_LABELS[filters.section]}
+                {t.catalog.sectionLabel}: {SECTION_LABELS[filters.section]}
               </Badge>
             )}
             {filters.roles.length > 0 && filters.roles.map(role => (
@@ -360,17 +363,17 @@ export function CatalogFilters({ filters, onFilterChange, onReset }: CatalogFilt
             ))}
             {filters.region !== 'all' && (
               <Badge variant="secondary">
-                Регион: {filters.region}
+                {t.catalog.regionLabel}: {filters.region}
               </Badge>
             )}
             {filters.rating > 0 && (
               <Badge variant="secondary">
-                Рейтинг: ⭐ {filters.rating}+
+                {t.catalog.ratingLabel}: ⭐ {filters.rating}+
               </Badge>
             )}
             {(filters.priceRange[0] > 0 || filters.priceRange[1] < 3000) && (
               <Badge variant="secondary">
-                Цена: {filters.priceRange[0]}-{filters.priceRange[1]} тыс. ₸
+                {t.catalog.priceLabel}: {filters.priceRange[0]}-{filters.priceRange[1]} {t.catalog.thousands}. ₸
               </Badge>
             )}
           </div>

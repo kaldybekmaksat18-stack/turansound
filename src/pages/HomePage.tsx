@@ -9,6 +9,7 @@ import { Button } from '../components/ui/button';
 import { mockArtists } from '../data/mockData';
 import { genreStats } from '../data/allKazakhArtists';
 import { ArtistSection } from '../types/artist';
+import { useProfileTranslation } from '../lib/i18n/useProfileTranslation';
 
 interface HomePageProps {
   onNavigate: (page: string, params?: any) => void;
@@ -20,6 +21,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
   const handleSectionSelect = (section: ArtistSection) => {
     onNavigate('catalog', { section });
   };
+
+  const t = useProfileTranslation();
 
   return (
     <div>
@@ -141,22 +144,22 @@ export function HomePage({ onNavigate }: HomePageProps) {
           <h2 className="mb-8 text-center">География платформы</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {[
-              { name: 'Алматы', flag: '🇰🇿', count: 12456 },
-              { name: 'Астана', flag: '🇰🇿', count: 8765 },
-              { name: 'Шымкент', flag: '🇰🇿', count: 5432 },
-              { name: 'Ташкент', flag: '🇺🇿', count: 9876 },
-              { name: 'Бишкек', flag: '🇰🇬', count: 4321 }
-            ].map((region) => (
+              { name: t.cities.almaty, flag: '🇰🇿', count: 12456 },
+              { name: t.cities.astana, flag: '🇰🇿', count: 8765 },
+              { name: t.cities.shymkent, flag: '🇰🇿', count: 5432 },
+              { name: t.cities.tashkent, flag: '🇺🇿', count: 9876 },
+              { name: t.cities.bishkek, flag: '🇰🇬', count: 4321 }
+            ].map((city, index) => (
               <Card
-                key={region.name}
+                key={city.name}
                 className="hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => onNavigate('catalog', { region: region.name })}
+                onClick={() => onNavigate('catalog', { region: city.name })}
               >
                 <CardContent className="pt-6 text-center">
-                  <div className="text-3xl mb-2">{region.flag}</div>
-                  <div className="font-medium mb-1">{region.name}</div>
+                  <div className="text-3xl mb-2">{city.flag}</div>
+                  <div className="font-medium mb-1">{city.name}</div>
                   <div className="text-sm text-muted-foreground">
-                    {region.count.toLocaleString()}
+                    {city.count.toLocaleString()}
                   </div>
                 </CardContent>
               </Card>

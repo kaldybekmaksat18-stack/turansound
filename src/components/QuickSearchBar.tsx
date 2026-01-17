@@ -10,6 +10,7 @@ import {
   GENRE_LABELS,
   EVENT_FORMAT_LABELS
 } from '../types/artist';
+import { useTranslation } from '../lib/i18n/LanguageContext';
 
 interface QuickSearchBarProps {
   onSearch: (query: string) => void;
@@ -17,6 +18,7 @@ interface QuickSearchBarProps {
 }
 
 export function QuickSearchBar({ onSearch, onQuickFilter }: QuickSearchBarProps) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
 
   // Популярные быстрые фильтры
@@ -35,7 +37,7 @@ export function QuickSearchBar({ onSearch, onQuickFilter }: QuickSearchBarProps)
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
         <Input
-          placeholder="Поиск артистов, жанров, стилей..."
+          placeholder={t.catalog.quickSearchPlaceholder}
           value={query}
           onChange={(e) => handleSearch(e.target.value)}
           className="pl-10 h-12 text-base bg-background"
@@ -47,7 +49,7 @@ export function QuickSearchBar({ onSearch, onQuickFilter }: QuickSearchBarProps)
         {/* Popular Sections */}
         <div className="flex items-center gap-2 flex-wrap">
           <TrendingUp className="w-4 h-4 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Популярные:</span>
+          <span className="text-sm text-muted-foreground">{t.catalog.popular}:</span>
           {popularSections.map((section) => (
             <Badge
               key={section}

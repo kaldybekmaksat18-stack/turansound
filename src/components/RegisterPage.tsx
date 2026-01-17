@@ -15,6 +15,8 @@ import {
 import { ArtistOnboarding, ArtistOnboardingData } from './ArtistOnboarding';
 import { apiHelpers, authHelpers } from '../utils/supabase/client';
 import { toast } from 'sonner@2.0.3';
+import { useTranslation } from '../lib/i18n/LanguageContext';
+import { useProfileTranslation } from '../lib/i18n/useProfileTranslation';
 
 interface RegisterPageProps {
   onNavigate: (page: string) => void;
@@ -22,6 +24,9 @@ interface RegisterPageProps {
 }
 
 export function RegisterPage({ onNavigate, onRegister }: RegisterPageProps) {
+  const { t } = useTranslation();
+  const tp = useProfileTranslation(); // Для доступа к cities и другим расширенным переводам
+  
   const [step, setStep] = useState(1);
   const [userType, setUserType] = useState<'artist' | 'client' | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -68,8 +73,8 @@ export function RegisterPage({ onNavigate, onRegister }: RegisterPageProps) {
       // Call onRegister with user data
       onRegister(user);
 
-      toast.success('Регистрация успешна! 🎉', {
-        description: `Добро пожаловать на TuranSound! Теперь вы можете использовать ${formData.email} для входа.`
+      toast.success(t.auth.register.registrationSuccess + ' 🎉', {
+        description: `${t.auth.login.welcome} ${formData.email}`
       });
 
       onNavigate('home');
@@ -79,16 +84,16 @@ export function RegisterPage({ onNavigate, onRegister }: RegisterPageProps) {
       // Check if user already exists
       if (error.message?.includes('already been registered') || 
           error.message?.includes('already exists')) {
-        toast.error('Пользователь уже существует', {
-          description: 'Этот email уже зарегистрирован. Попробуйте войти.',
+        toast.error(t.common.error, {
+          description: t.auth.register.userExists,
           action: {
-            label: 'Войти',
+            label: t.header.login,
             onClick: () => onNavigate('login')
           }
         });
       } else {
-        toast.error('Ошибка регистрации', {
-          description: error.message || 'Попробуйте снова'
+        toast.error(t.common.error, {
+          description: error.message || t.common.checkEmail
         });
       }
     } finally {
@@ -296,12 +301,12 @@ export function RegisterPage({ onNavigate, onRegister }: RegisterPageProps) {
                         <SelectValue placeholder="Выберите регион" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="almaty">Алматы</SelectItem>
-                        <SelectItem value="astana">Астана</SelectItem>
-                        <SelectItem value="shymkent">Шымкент</SelectItem>
-                        <SelectItem value="karaganda">Караганда</SelectItem>
-                        <SelectItem value="tashkent">Ташкент</SelectItem>
-                        <SelectItem value="bishkek">Бишкек</SelectItem>
+                        <SelectItem value="almaty">{tp.cities.almaty}</SelectItem>
+                        <SelectItem value="astana">{tp.cities.astana}</SelectItem>
+                        <SelectItem value="shymkent">{tp.cities.shymkent}</SelectItem>
+                        <SelectItem value="karaganda">{tp.cities.karaganda}</SelectItem>
+                        <SelectItem value="tashkent">{tp.cities.tashkent}</SelectItem>
+                        <SelectItem value="bishkek">{tp.cities.bishkek}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

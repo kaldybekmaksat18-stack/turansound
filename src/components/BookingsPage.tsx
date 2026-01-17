@@ -17,6 +17,8 @@ import {
   AlertDialogTitle,
 } from './ui/alert-dialog';
 import { useState } from 'react';
+import { useLanguage } from '../lib/i18n/LanguageContext';
+import { bookingTexts } from '../lib/i18n/bookingTexts';
 
 interface BookingsPageProps {
   onNavigate: (page: string, params?: any) => void;
@@ -24,6 +26,8 @@ interface BookingsPageProps {
 }
 
 export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
+  const { language } = useLanguage();
+  const bt = bookingTexts[language];
   const { bookings, stats, loading, error, cancelBooking, completeBooking } = useBookingsWithArtists(userId || null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
@@ -34,12 +38,12 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
     const result = await cancelBooking(selectedBookingId);
     
     if (result.success) {
-      toast.success('Бронирование отменено', {
-        description: 'Средства возвращены на ваш счёт'
+      toast.success(bt.bookingCancelled, {
+        description: bt.bookingCancelledDesc
       });
     } else {
-      toast.error('Ошибка отмены', {
-        description: result.error || 'Попробуйте позже'
+      toast.error(bt.error, {
+        description: result.error
       });
     }
     
@@ -51,24 +55,24 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
     const result = await completeBooking(bookingId);
     
     if (result.success) {
-      toast.success('Мероприятие завершено', {
-        description: 'Средства переведены артисту'
+      toast.success(bt.eventCompleted, {
+        description: bt.eventCompletedDesc
       });
     } else {
-      toast.error('Ошибка', {
-        description: result.error || 'Попробуйте позже'
+      toast.error(bt.error, {
+        description: result.error
       });
     }
   };
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-      pending: { label: 'Ожидает', variant: 'secondary' },
-      confirmed: { label: 'Подтверждено', variant: 'default' },
-      completed: { label: 'Завершено', variant: 'outline' },
-      cancelled: { label: 'Отменено', variant: 'destructive' },
-      in_progress: { label: 'В процессе', variant: 'default' },
-      disputed: { label: 'Спор', variant: 'destructive' }
+      pending: { label: bt.pending, variant: 'secondary' },
+      confirmed: { label: bt.confirmed, variant: 'default' },
+      completed: { label: bt.completed, variant: 'outline' },
+      cancelled: { label: bt.cancelled, variant: 'destructive' },
+      in_progress: { label: bt.inProgress, variant: 'default' },
+      disputed: { label: bt.disputed, variant: 'destructive' }
     };
     return <Badge variant={variants[status]?.variant || 'secondary'}>{variants[status]?.label || status}</Badge>;
   };
@@ -92,11 +96,11 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
 
   const getPaymentStatusLabel = (paymentStatus: string) => {
     const labels: Record<string, string> = {
-      pending: '⏳ Ожидает оплаты',
-      paid: '💳 Оплачено',
-      escrow: '🔒 На эскроу',
-      released: '✅ Выплачено',
-      refunded: '↩️ Возвращено'
+      pending: bt.awaitingPayment,
+      paid: bt.paidStatus,
+      escrow: bt.inEscrow,
+      released: bt.released,
+      refunded: bt.refunded
     };
     return labels[paymentStatus] || paymentStatus;
   };
@@ -108,12 +112,12 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
         <Card className="max-w-md">
           <CardContent className="pt-6 text-center">
             <AlertCircle className="w-12 h-12 text-yellow-600 mx-auto mb-4" />
-            <h3 className="mb-2">Требуется авторизация</h3>
+            <h3 className="mb-2">{bt.authRequired}</h3>
             <p className="text-muted-foreground mb-4">
-              Войдите в систему, чтобы просмотреть ваши бронирования
+              {bt.authRequiredDesc}
             </p>
             <Button onClick={() => onNavigate('login')} className="w-full">
-              Войти
+              {bt.login}
             </Button>
           </CardContent>
         </Card>
@@ -127,7 +131,7 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Загрузка бронирований...</p>
+          <p className="text-muted-foreground">{bt.loadingBookings}</p>
         </div>
       </div>
     );
@@ -140,10 +144,10 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
         <Card className="max-w-md">
           <CardContent className="pt-6 text-center">
             <XCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-            <h3 className="mb-2">Ошибка загрузки</h3>
+            <h3 className="mb-2">{bt.loadingError}</h3>
             <p className="text-muted-foreground mb-4">{error}</p>
             <Button onClick={() => window.location.reload()} variant="outline">
-              Обновить страницу
+              {bt.reload}
             </Button>
           </CardContent>
         </Card>
@@ -155,9 +159,9 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="mb-2">Мои бронирования</h1>
+          <h1 className="mb-2">{bt.myBookings}</h1>
           <p className="text-muted-foreground">
-            Управляйте вашими заказами и контрактами
+            {bt.manageBookings}
           </p>
         </div>
 
@@ -168,7 +172,7 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-2xl mb-1">{stats.total}</div>
-                  <div className="text-sm text-muted-foreground">Всего букингов</div>
+                  <div className="text-sm text-muted-foreground">{bt.totalBookings}</div>
                 </div>
                 <Calendar className="w-8 h-8 text-purple-600" />
               </div>
@@ -179,7 +183,7 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-2xl mb-1">{stats.upcoming}</div>
-                  <div className="text-sm text-muted-foreground">Предстоящих</div>
+                  <div className="text-sm text-muted-foreground">{bt.upcoming}</div>
                 </div>
                 <Clock className="w-8 h-8 text-blue-600" />
               </div>
@@ -190,7 +194,7 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-2xl mb-1">₸{(stats.escrowTotal / 1000).toFixed(0)}K</div>
-                  <div className="text-sm text-muted-foreground">На эскроу</div>
+                  <div className="text-sm text-muted-foreground">{bt.onEscrow}</div>
                 </div>
                 <CreditCard className="w-8 h-8 text-green-600" />
               </div>
@@ -201,7 +205,7 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-2xl mb-1">{stats.completed}</div>
-                  <div className="text-sm text-muted-foreground">Завершённых</div>
+                  <div className="text-sm text-muted-foreground">{bt.completed}</div>
                 </div>
                 <CheckCircle className="w-8 h-8 text-gray-600" />
               </div>
@@ -214,15 +218,15 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
           <Card>
             <CardContent className="pt-6 text-center py-12">
               <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <h3 className="mb-2">У вас пока нет бронирований</h3>
+              <h3 className="mb-2">{bt.noBookings}</h3>
               <p className="text-muted-foreground mb-6">
-                Начните с поиска артистов в каталоге
+                {bt.noBookingsDesc}
               </p>
               <Button 
                 onClick={() => onNavigate('catalog')} 
                 className="bg-gradient-to-r from-purple-600 to-pink-600"
               >
-                Перейти в каталог
+                {bt.goToCatalog}
               </Button>
             </CardContent>
           </Card>
@@ -232,9 +236,9 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
         {bookings.length > 0 && (
           <Tabs defaultValue="all" className="w-full">
             <TabsList>
-              <TabsTrigger value="all">Все</TabsTrigger>
-              <TabsTrigger value="upcoming">Предстоящие</TabsTrigger>
-              <TabsTrigger value="completed">Завершённые</TabsTrigger>
+              <TabsTrigger value="all">{bt.all}</TabsTrigger>
+              <TabsTrigger value="upcoming">{bt.upcoming}</TabsTrigger>
+              <TabsTrigger value="completed">{bt.completed}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="space-y-4 mt-6">
@@ -297,7 +301,7 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
                           {booking.contractUrl && (
                             <Button variant="outline" size="sm" onClick={() => window.open(booking.contractUrl, '_blank')}>
                               <FileText className="w-4 h-4 mr-2" />
-                              Контракт
+                              {bt.contract}
                             </Button>
                           )}
                           <Button 
@@ -306,7 +310,7 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
                             onClick={() => toast.info('Функция чата в разработке')}
                           >
                             <User className="w-4 h-4 mr-2" />
-                            Связаться
+                            {bt.contact}
                           </Button>
                           {(booking.status === 'confirmed' || booking.status === 'pending') && (
                             <Button 
@@ -318,7 +322,7 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
                                 setCancelDialogOpen(true);
                               }}
                             >
-                              Отменить
+                              {bt.cancel}
                             </Button>
                           )}
                           {booking.status === 'in_progress' && (
@@ -327,7 +331,7 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
                               className="bg-gradient-to-r from-green-600 to-emerald-600"
                               onClick={() => handleCompleteBooking(booking.id)}
                             >
-                              Завершить мероприятие
+                              {bt.completeEvent}
                             </Button>
                           )}
                           {booking.status === 'completed' && (
@@ -336,7 +340,7 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
                               className="bg-gradient-to-r from-purple-600 to-pink-600"
                               onClick={() => toast.info('Функция отзывов в разработке')}
                             >
-                              Оставить отзыв
+                              {bt.leaveReview}
                             </Button>
                           )}
                         </div>
@@ -392,12 +396,12 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
                             {booking.contractUrl && (
                               <Button variant="outline" size="sm" onClick={() => window.open(booking.contractUrl, '_blank')}>
                                 <FileText className="w-4 h-4 mr-2" />
-                                Контракт
+                                {bt.contract}
                               </Button>
                             )}
                             <Button variant="outline" size="sm">
                               <User className="w-4 h-4 mr-2" />
-                              Связаться
+                              {bt.contact}
                             </Button>
                           </div>
                         </div>
@@ -448,7 +452,7 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
                             className="bg-gradient-to-r from-purple-600 to-pink-600"
                             onClick={() => toast.info('Функция отзывов в разработке')}
                           >
-                            Оставить отзыв
+                            {bt.leaveReview}
                           </Button>
                         </div>
                       </div>
@@ -464,19 +468,18 @@ export function BookingsPage({ onNavigate, userId }: BookingsPageProps) {
       <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Отменить бронирование?</AlertDialogTitle>
+            <AlertDialogTitle>{bt.cancelBookingTitle}</AlertDialogTitle>
             <AlertDialogDescription>
-              Это действие отменит бронирование и вернёт средства на ваш счёт.
-              В зависимости от условий контракта, может быть удержана комиссия.
+              {bt.cancelBookingDesc}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Не отменять</AlertDialogCancel>
+            <AlertDialogCancel>{bt.dontCancel}</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleCancelBooking}
               className="bg-red-600 hover:bg-red-700"
             >
-              Да, отменить
+              {bt.yesCancel}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

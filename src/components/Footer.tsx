@@ -1,4 +1,5 @@
 import { Music2, Mail, Phone, MapPin, Instagram, Facebook, Youtube, Shield, CreditCard, Users, Sparkles } from 'lucide-react';
+import { useTranslation } from '../lib/i18n/LanguageContext';
 
 interface FooterProps {
   onNavigate: (page: string) => void;
@@ -6,6 +7,7 @@ interface FooterProps {
 
 export function Footer({ onNavigate }: FooterProps) {
   const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
 
   return (
     <footer className="bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 text-white mt-20">
@@ -18,8 +20,8 @@ export function Footer({ onNavigate }: FooterProps) {
                 <Shield className="w-5 h-5 text-purple-400" />
               </div>
               <div>
-                <p className="font-semibold text-sm">Безопасные сделки</p>
-                <p className="text-xs text-slate-400">Эскроу-счета</p>
+                <p className="font-semibold text-sm">{t.footer.benefits.secureDeals}</p>
+                <p className="text-xs text-slate-400">{t.footer.benefits.escrow}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -27,8 +29,8 @@ export function Footer({ onNavigate }: FooterProps) {
                 <CreditCard className="w-5 h-5 text-purple-400" />
               </div>
               <div>
-                <p className="font-semibold text-sm">Прозрачность</p>
-                <p className="text-xs text-slate-400">Цифровые контракты</p>
+                <p className="font-semibold text-sm">{t.footer.benefits.transparency}</p>
+                <p className="text-xs text-slate-400">{t.footer.benefits.digitalContracts}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -36,8 +38,8 @@ export function Footer({ onNavigate }: FooterProps) {
                 <Users className="w-5 h-5 text-purple-400" />
               </div>
               <div>
-                <p className="font-semibold text-sm">180+ артистов</p>
-                <p className="text-xs text-slate-400">Проверенные профили</p>
+                <p className="font-semibold text-sm">{t.footer.benefits.artistsCount}</p>
+                <p className="text-xs text-slate-400">{t.footer.benefits.verifiedProfiles}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -45,8 +47,8 @@ export function Footer({ onNavigate }: FooterProps) {
                 <Sparkles className="w-5 h-5 text-purple-400" />
               </div>
               <div>
-                <p className="font-semibold text-sm">AI-подбор</p>
-                <p className="text-xs text-slate-400">Умный поиск</p>
+                <p className="font-semibold text-sm">{t.footer.benefits.aiMatching}</p>
+                <p className="text-xs text-slate-400">{t.footer.benefits.smartSearch}</p>
               </div>
             </div>
           </div>
@@ -64,7 +66,7 @@ export function Footer({ onNavigate }: FooterProps) {
               <h3 className="text-xl font-bold">TuranSound</h3>
             </div>
             <p className="text-slate-300 text-sm mb-4">
-              Цифровая платформа для музыкального рынка Центральной Азии. Объединяем артистов и заказчиков в единой экосистеме.
+              {t.footer.about.description}
             </p>
             <div className="flex gap-3">
               <a 
@@ -96,14 +98,14 @@ export function Footer({ onNavigate }: FooterProps) {
 
           {/* Для артистов */}
           <div>
-            <h4 className="font-semibold mb-4">Для артистов</h4>
+            <h4 className="font-semibold mb-4">{t.footer.forArtists.title}</h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <button 
                   onClick={() => onNavigate('register')}
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Регистрация артиста
+                  {t.footer.forArtists.register}
                 </button>
               </li>
               <li>
@@ -111,7 +113,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate('dashboard')}
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Личный кабинет
+                  {t.footer.forArtists.dashboard}
                 </button>
               </li>
               <li>
@@ -119,7 +121,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate('verification')}
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Верификация профиля
+                  {t.footer.forArtists.verification}
                 </button>
               </li>
               <li>
@@ -127,7 +129,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate('financial')}
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Финансовый профиль
+                  {t.footer.forArtists.financial}
                 </button>
               </li>
               <li>
@@ -135,7 +137,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate('reputation')}
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Репутационная система
+                  {t.footer.forArtists.reputation}
                 </button>
               </li>
               <li>
@@ -143,7 +145,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate('admin-seed')}
                   className="hover:text-purple-400 transition-colors text-xs"
                 >
-                  🔧 Админ-панель (Dev)
+                  {t.footer.forArtists.adminPanel}
                 </button>
               </li>
             </ul>
@@ -151,14 +153,14 @@ export function Footer({ onNavigate }: FooterProps) {
 
           {/* Для заказчиков */}
           <div>
-            <h4 className="font-semibold mb-4">Для заказчиков</h4>
+            <h4 className="font-semibold mb-4">{t.footer.forCustomers.title}</h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <button 
                   onClick={() => onNavigate('catalog')}
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Каталог артистов
+                  {t.footer.forCustomers.catalog}
                 </button>
               </li>
               <li>
@@ -166,7 +168,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate('ai-assistant')}
                   className="hover:text-purple-400 transition-colors"
                 >
-                  AI-ассистент
+                  {t.footer.forCustomers.aiAssistant}
                 </button>
               </li>
               <li>
@@ -174,7 +176,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate('bookings')}
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Мои бронирования
+                  {t.footer.forCustomers.bookings}
                 </button>
               </li>
               <li>
@@ -182,7 +184,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate('contracts')}
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Юридические документы
+                  {t.footer.forCustomers.legalDocs}
                 </button>
               </li>
               <li>
@@ -190,7 +192,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate('support')}
                   className="hover:text-purple-400 transition-colors"
                 >
-                  Поддержка и споры
+                  {t.footer.forCustomers.support}
                 </button>
               </li>
             </ul>
@@ -198,7 +200,7 @@ export function Footer({ onNavigate }: FooterProps) {
 
           {/* Контакты */}
           <div>
-            <h4 className="font-semibold mb-4">Контакты</h4>
+            <h4 className="font-semibold mb-4">{t.footer.contacts.title}</h4>
             <ul className="space-y-3 text-sm text-slate-300">
               <li className="flex items-start gap-2">
                 <Mail className="w-4 h-4 mt-0.5 text-purple-400" />
@@ -214,9 +216,8 @@ export function Footer({ onNavigate }: FooterProps) {
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5 text-purple-400" />
-                <span>
-                  Алматы, Казахстан<br />
-                  пр. Абая, 150
+                <span className="whitespace-pre-line">
+                  {t.footer.contacts.address}
                 </span>
               </li>
             </ul>
@@ -227,26 +228,26 @@ export function Footer({ onNavigate }: FooterProps) {
         <div className="border-t border-slate-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-400">
             <p>
-              © {currentYear} TuranSound. Все права защищены.
+              © {currentYear} TuranSound. {t.footer.bottom.rights}
             </p>
             <div className="flex gap-6">
               <button 
                 onClick={() => onNavigate('about')}
                 className="hover:text-purple-400 transition-colors"
               >
-                О платформе
+                {t.footer.bottom.about}
               </button>
               <button 
                 onClick={() => onNavigate('contracts')}
                 className="hover:text-purple-400 transition-colors"
               >
-                Условия использования
+                {t.footer.bottom.terms}
               </button>
               <button 
                 onClick={() => onNavigate('contracts')}
                 className="hover:text-purple-400 transition-colors"
               >
-                Политика конфиденциальности
+                {t.footer.bottom.privacy}
               </button>
             </div>
           </div>
@@ -255,7 +256,7 @@ export function Footer({ onNavigate }: FooterProps) {
         {/* Регионы присутствия */}
         <div className="mt-6 text-center">
           <p className="text-xs text-slate-500">
-            Работаем в: Алматы • Астана • Шымкент • Караганда • Ташкент • Бишкек • Стамбул
+            {t.footer.bottom.regions}
           </p>
         </div>
       </div>

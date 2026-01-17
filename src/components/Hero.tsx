@@ -2,12 +2,15 @@ import { Search, TrendingUp, Shield, Globe } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { useTranslation } from '../lib/i18n/LanguageContext';
 
 interface HeroProps {
   onNavigate: (page: string) => void;
 }
 
 export function Hero({ onNavigate }: HeroProps) {
+  const { t } = useTranslation();
+  
   return (
     <div className="relative overflow-hidden">
       {/* Background with gradient overlay */}
@@ -24,24 +27,23 @@ export function Hero({ onNavigate }: HeroProps) {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
             <TrendingUp className="w-4 h-4" />
-            <span className="text-sm">100,000+ артистов в Центральной Азии</span>
+            <span className="text-sm">{t.home.artistCount}</span>
           </div>
 
           {/* Main heading */}
           <h1 className="text-5xl md:text-7xl mb-6 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
-            Культура становится экономикой
+            {t.home.heroTitle}
           </h1>
           
           <p className="text-xl md:text-2xl text-purple-100 mb-8 leading-relaxed">
-            Цифровой рынок музыкантов, композиторов и артистов.<br />
-            От Алматы до Стамбула. От хаоса к системе.
+            {t.home.heroSubtitle}
           </p>
 
           {/* Search bar */}
           <div className="max-w-2xl mx-auto mb-8">
             <div className="flex gap-2 p-2 bg-white rounded-xl shadow-2xl">
               <Input 
-                placeholder="Жанр, регион или имя артиста..."
+                placeholder={t.home.searchPlaceholder}
                 className="border-0 bg-transparent text-base"
               />
               <Button 
@@ -50,7 +52,7 @@ export function Hero({ onNavigate }: HeroProps) {
                 className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
               >
                 <Search className="w-5 h-5 mr-2" />
-                Найти артиста
+                {t.home.findArtist}
               </Button>
             </div>
           </div>
@@ -59,7 +61,7 @@ export function Hero({ onNavigate }: HeroProps) {
           <div className="max-w-2xl mx-auto mb-12">
             <div className="bg-purple-500/20 backdrop-blur-sm border border-purple-300/30 rounded-lg p-4 text-sm">
               <p className="text-purple-100">
-                💡 <strong>Демо-версия:</strong> Нажмите "Регистрация" в правом верхнем углу, чтобы создать аккаунт артиста или заказчика
+                💡 <strong>{t.home.demoVersion}</strong> {t.home.demoHint}
               </p>
             </div>
           </div>
@@ -67,16 +69,16 @@ export function Hero({ onNavigate }: HeroProps) {
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
-              <div className="text-4xl mb-2">100,000+</div>
-              <div className="text-purple-200">Артистов</div>
+              <div className="text-4xl mb-2">{t.home.stats.artists}</div>
+              <div className="text-purple-200">{t.home.stats.artistsLabel}</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
-              <div className="text-4xl mb-2">5 стран</div>
-              <div className="text-purple-200">Центральная Азия</div>
+              <div className="text-4xl mb-2">{t.home.stats.countries}</div>
+              <div className="text-purple-200">{t.home.stats.countriesLabel}</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
-              <div className="text-4xl mb-2">₸2 млрд</div>
-              <div className="text-purple-200">Оборот в год</div>
+              <div className="text-4xl mb-2">{t.home.stats.revenue}</div>
+              <div className="text-purple-200">{t.home.stats.revenueLabel}</div>
             </div>
           </div>
 
@@ -85,22 +87,22 @@ export function Hero({ onNavigate }: HeroProps) {
             <div className="flex gap-3">
               <Shield className="w-6 h-6 flex-shrink-0 text-purple-300" />
               <div>
-                <div className="mb-1">Безопасные контракты</div>
-                <div className="text-sm text-purple-200">Защита от кидалова</div>
+                <div className="mb-1">{t.home.features.contracts.title}</div>
+                <div className="text-sm text-purple-200">{t.home.features.contracts.description}</div>
               </div>
             </div>
             <div className="flex gap-3">
               <TrendingUp className="w-6 h-6 flex-shrink-0 text-purple-300" />
               <div>
-                <div className="mb-1">Прозрачный рейтинг</div>
-                <div className="text-sm text-purple-200">Реальные отзывы</div>
+                <div className="mb-1">{t.home.features.rating.title}</div>
+                <div className="text-sm text-purple-200">{t.home.features.rating.description}</div>
               </div>
             </div>
             <div className="flex gap-3">
               <Globe className="w-6 h-6 flex-shrink-0 text-purple-300" />
               <div>
-                <div className="mb-1">Экспорт культуры</div>
-                <div className="text-sm text-purple-200">Выход на мировой рынок</div>
+                <div className="mb-1">{t.home.features.export.title}</div>
+                <div className="text-sm text-purple-200">{t.home.features.export.description}</div>
               </div>
             </div>
           </div>

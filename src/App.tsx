@@ -28,6 +28,7 @@ import { toast } from 'sonner@2.0.3';
 import { User } from './types';
 import { authHelpers } from './utils/supabase/client';
 import { useDatabaseStatus } from './hooks/useDatabaseStatus';
+import { LanguageProvider } from './lib/i18n/LanguageContext';
 
 type Page = 'home' | 'catalog' | 'artist' | 'ai-assistant' | 'about' | 'bookings' | 'login' | 'register' | 'financial' | 'contracts' | 'reputation' | 'dashboard' | 'profile-settings' | 'customer-profile' | 'notifications' | 'verification' | 'support' | 'production' | 'admin-seed';
 
@@ -138,85 +139,87 @@ export default function App() {
     : null;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Database Setup Warning */}
-      {!checking && tablesExist === false && <DatabaseSetupWarning />}
-      
-      <Header 
-        onNavigate={handleNavigate} 
-        currentPage={currentPage} 
-        currentUser={currentUser}
-        onLogout={handleLogout}
-      />
-      
-      <div className="flex-1">
-        {currentPage === 'home' && <HomePage onNavigate={handleNavigate} />}
-        {currentPage === 'catalog' && <CatalogPage onNavigate={handleNavigate} initialSection={pageParams.section} />}
-        {currentPage === 'artist' && selectedArtist && (
-          <ArtistProfile 
-            artist={selectedArtist}
-            onBack={() => handleNavigate('catalog')}
-            onBook={handleBook}
+    <LanguageProvider>
+      <div className="min-h-screen bg-background flex flex-col">
+        {/* Database Setup Warning */}
+        {!checking && tablesExist === false && <DatabaseSetupWarning />}
+        
+        <Header 
+          onNavigate={handleNavigate} 
+          currentPage={currentPage} 
+          currentUser={currentUser}
+          onLogout={handleLogout}
+        />
+        
+        <div className="flex-1">
+          {currentPage === 'home' && <HomePage onNavigate={handleNavigate} />}
+          {currentPage === 'catalog' && <CatalogPage onNavigate={handleNavigate} initialSection={pageParams.section} />}
+          {currentPage === 'artist' && selectedArtist && (
+            <ArtistProfile 
+              artist={selectedArtist}
+              onBack={() => handleNavigate('catalog')}
+              onBook={handleBook}
+            />
+          )}
+          {currentPage === 'ai-assistant' && <AIAssistant onNavigate={handleNavigate} />}
+          {currentPage === 'about' && <AboutPlatform onNavigate={handleNavigate} />}
+          {currentPage === 'login' && (
+            <LoginPage onNavigate={handleNavigate} onLogin={handleLogin} />
+          )}
+          {currentPage === 'register' && (
+            <RegisterPage onNavigate={handleNavigate} onRegister={handleRegister} />
+          )}
+          {currentPage === 'bookings' && (
+            <BookingsPage onNavigate={handleNavigate} userId={currentUser?.id} />
+          )}
+          {currentPage === 'financial' && (
+            <FinancialProfile artistId={currentUser?.id || '1'} />
+          )}
+          {currentPage === 'contracts' && (
+            <ContractsLegal userRole={currentUser?.role || 'artist'} />
+          )}
+          {currentPage === 'reputation' && (
+            <ReputationSystem userId={currentUser?.id || '1'} userRole={currentUser?.role || 'artist'} />
+          )}
+          {currentPage === 'dashboard' && (
+            <ArtistDashboard onNavigate={handleNavigate} userId={currentUser?.id || '1'} />
+          )}
+          {currentPage === 'profile-settings' && (
+            <ArtistProfileSettings artistId={currentUser?.id || '1'} onNavigate={handleNavigate} />
+          )}
+          {currentPage === 'customer-profile' && (
+            <CustomerProfileSettings customerId={currentUser?.id || '1'} onNavigate={handleNavigate} />
+          )}
+          {currentPage === 'notifications' && (
+            <NotificationCenter />
+          )}
+          {currentPage === 'verification' && (
+            <VerificationCenter userType={currentUser?.role || 'artist'} userId={currentUser?.id || '1'} />
+          )}
+          {currentPage === 'support' && (
+            <SupportDisputes userId={currentUser?.id || '1'} userRole={currentUser?.role || 'artist'} />
+          )}
+          {currentPage === 'production' && (
+            <ProductionPage onNavigate={handleNavigate} />
+          )}
+          {currentPage === 'admin-seed' && (
+            <DatabaseSeedPanel />
+          )}
+        </div>
+
+        {/* Enhanced Booking Modal */}
+        {bookingModalArtist && (
+          <EnhancedBookingModal
+            artist={bookingModalArtist}
+            onClose={() => setBookingArtist(null)}
+            onConfirm={handleBookingConfirm}
+            userId={currentUser?.id}
           />
         )}
-        {currentPage === 'ai-assistant' && <AIAssistant onNavigate={handleNavigate} />}
-        {currentPage === 'about' && <AboutPlatform onNavigate={handleNavigate} />}
-        {currentPage === 'login' && (
-          <LoginPage onNavigate={handleNavigate} onLogin={handleLogin} />
-        )}
-        {currentPage === 'register' && (
-          <RegisterPage onNavigate={handleNavigate} onRegister={handleRegister} />
-        )}
-        {currentPage === 'bookings' && (
-          <BookingsPage onNavigate={handleNavigate} userId={currentUser?.id} />
-        )}
-        {currentPage === 'financial' && (
-          <FinancialProfile artistId={currentUser?.id || '1'} />
-        )}
-        {currentPage === 'contracts' && (
-          <ContractsLegal userRole={currentUser?.role || 'artist'} />
-        )}
-        {currentPage === 'reputation' && (
-          <ReputationSystem userId={currentUser?.id || '1'} userRole={currentUser?.role || 'artist'} />
-        )}
-        {currentPage === 'dashboard' && (
-          <ArtistDashboard onNavigate={handleNavigate} userId={currentUser?.id || '1'} />
-        )}
-        {currentPage === 'profile-settings' && (
-          <ArtistProfileSettings artistId={currentUser?.id || '1'} onNavigate={handleNavigate} />
-        )}
-        {currentPage === 'customer-profile' && (
-          <CustomerProfileSettings customerId={currentUser?.id || '1'} onNavigate={handleNavigate} />
-        )}
-        {currentPage === 'notifications' && (
-          <NotificationCenter />
-        )}
-        {currentPage === 'verification' && (
-          <VerificationCenter userType={currentUser?.role || 'artist'} userId={currentUser?.id || '1'} />
-        )}
-        {currentPage === 'support' && (
-          <SupportDisputes userId={currentUser?.id || '1'} userRole={currentUser?.role || 'artist'} />
-        )}
-        {currentPage === 'production' && (
-          <ProductionPage onNavigate={handleNavigate} />
-        )}
-        {currentPage === 'admin-seed' && (
-          <DatabaseSeedPanel />
-        )}
+
+        <Toaster />
+        <Footer onNavigate={handleNavigate} />
       </div>
-
-      {/* Enhanced Booking Modal */}
-      {bookingModalArtist && (
-        <EnhancedBookingModal
-          artist={bookingModalArtist}
-          onClose={() => setBookingArtist(null)}
-          onConfirm={handleBookingConfirm}
-          userId={currentUser?.id}
-        />
-      )}
-
-      <Toaster />
-      <Footer onNavigate={handleNavigate} />
-    </div>
+    </LanguageProvider>
   );
 }

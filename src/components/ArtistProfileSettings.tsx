@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner@2.0.3';
 import { useArtistProfile } from '../hooks/useArtistProfile';
 import { isSupabaseConfigured } from '../lib/supabase';
+import { useProfileTranslation } from '../lib/i18n/useProfileTranslation';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Input } from './ui/input';
@@ -28,6 +29,9 @@ export function ArtistProfileSettings({ artistId, onNavigate }: ArtistProfileSet
   const [activeTab, setActiveTab] = useState('basic');
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Подключаем переводы
+  const t = useProfileTranslation();
   
   // Состояния для добавления языков и жанров
   const [newLanguage, setNewLanguage] = useState('');
@@ -225,7 +229,7 @@ export function ArtistProfileSettings({ artistId, onNavigate }: ArtistProfileSet
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 mx-auto mb-4 animate-spin text-purple-600" />
-          <p className="text-muted-foreground">Загрузка профиля...</p>
+          <p className="text-muted-foreground">{t.common.loading}</p>
         </div>
       </div>
     );
@@ -238,30 +242,39 @@ export function ArtistProfileSettings({ artistId, onNavigate }: ArtistProfileSet
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="mb-2">Настройки профиля</h1>
+              <h1 className="mb-2">{t.artistSettings.title}</h1>
               <p className="text-muted-foreground">
-                Управление вашим артистическим профилем
+                {t.artistSettings.subtitle}
               </p>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => onNavigate('artist')}>
                 <Eye className="w-4 h-4 mr-2" />
-                Предпросмотр
+                {t.artistDashboard.editProfile.replace('Редактировать профиль', 'Предпросмотр')}
               </Button>
               {isEditing ? (
                 <>
                   <Button variant="outline" onClick={() => setIsEditing(false)}>
-                    Отмена
+                    {t.artistSettings.cancelEditing}
                   </Button>
-                  <Button onClick={handleSave} className="bg-gradient-to-r from-purple-600 to-pink-600">
-                    <Check className="w-4 h-4 mr-2" />
-                    Сохранить
+                  <Button onClick={handleSave} className="bg-gradient-to-r from-purple-600 to-pink-600" disabled={isSaving}>
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {t.artistSettings.saving}
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-4 h-4 mr-2" />
+                        {t.artistSettings.saveChanges}
+                      </>
+                    )}
                   </Button>
                 </>
               ) : (
                 <Button onClick={() => setIsEditing(true)} className="bg-gradient-to-r from-purple-600 to-pink-600">
                   <Edit className="w-4 h-4 mr-2" />
-                  Редактировать
+                  {t.artistDashboard.editProfile}
                 </Button>
               )}
             </div>
@@ -273,13 +286,13 @@ export function ArtistProfileSettings({ artistId, onNavigate }: ArtistProfileSet
               <Shield className="w-5 h-5 text-green-600" />
               <div className="flex-1">
                 <div className="font-medium text-green-900 dark:text-green-100">
-                  ✓ Профиль верифицирован
+                  {t.artistSettings.basic.verified}
                 </div>
                 <div className="text-sm text-green-700 dark:text-green-300">
-                  Ваш профиль прошёл проверку KYC и ЭЦП
+                  {t.artistSettings.basic.verifiedDescription}
                 </div>
               </div>
-              <Badge className="bg-green-600">Проверено</Badge>
+              <Badge className="bg-green-600">{t.statuses.verified}</Badge>
             </div>
           )}
         </div>
@@ -404,12 +417,12 @@ export function ArtistProfileSettings({ artistId, onNavigate }: ArtistProfileSet
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="almaty">Алматы</SelectItem>
-                        <SelectItem value="astana">Астана</SelectItem>
-                        <SelectItem value="shymkent">Шымкент</SelectItem>
-                        <SelectItem value="karaganda">Караганда</SelectItem>
-                        <SelectItem value="tashkent">Ташкент</SelectItem>
-                        <SelectItem value="bishkek">Бишкек</SelectItem>
+                        <SelectItem value="almaty">{t.cities.almaty}</SelectItem>
+                        <SelectItem value="astana">{t.cities.astana}</SelectItem>
+                        <SelectItem value="shymkent">{t.cities.shymkent}</SelectItem>
+                        <SelectItem value="karaganda">{t.cities.karaganda}</SelectItem>
+                        <SelectItem value="tashkent">{t.cities.tashkent}</SelectItem>
+                        <SelectItem value="bishkek">{t.cities.bishkek}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

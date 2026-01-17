@@ -96,11 +96,12 @@ export async function getArtistProfile(userId: string): Promise<ArtistProfile | 
       if (error.code === 'PGRST116' || error.message.includes('Could not find')) {
         console.warn('⚠️ Таблица artist_profiles не найдена.');
         console.warn('📖 Решение: Выполните SQL миграцию в Supabase Dashboard');
+        console.warn('   ✅ Синтаксическая ошибка в миграции ИСПРАВЛЕНА!');
         console.warn('   1. Откройте: https://supabase.com/dashboard/project/hpcwkbkglggimwcbxpoh/editor');
         console.warn('   2. SQL Editor → New Query');
         console.warn('   3. Скопируйте файл: /supabase/migrations/000_COMPLETE_SETUP.sql');
         console.warn('   4. Нажмите Run');
-        console.warn('   Подробнее: README.md → "Частые проблемы"');
+        console.warn('   📚 Подробнее: DATABASE_SETUP_FIX.md или SUPABASE_SETUP_GUIDE.md');
         // Возвращаем null вместо выброса ошибки
         return null;
       }

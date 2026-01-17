@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
+import { useProfileTranslation } from '../lib/i18n/useProfileTranslation';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -15,19 +16,21 @@ interface AIAssistantProps {
 }
 
 export function AIAssistant({ onNavigate }: AIAssistantProps) {
+  const t = useProfileTranslation();
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'Здравствуйте! Я AI-помощник TuranSound. Помогу подобрать идеального артиста для вашего мероприятия. Расскажите, что планируете?'
+      content: t.aiAssistant.greeting
     }
   ]);
   const [input, setInput] = useState('');
 
   const quickPrompts = [
-    'Свадьба на 200 человек в Алматы',
-    'Джазовый вечер в ресторане',
-    'Корпоратив с национальной программой',
-    'День рождения с DJ'
+    t.aiAssistant.quickPrompts.wedding,
+    t.aiAssistant.quickPrompts.jazzEvening,
+    t.aiAssistant.quickPrompts.corporate,
+    t.aiAssistant.quickPrompts.birthday
   ];
 
   const handleSend = () => {
@@ -69,8 +72,8 @@ export function AIAssistant({ onNavigate }: AIAssistantProps) {
               <Sparkles className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1>AI-Помощник</h1>
-              <p className="text-muted-foreground">Подберём идеального артиста за минуту</p>
+              <h1>{t.aiAssistant.title}</h1>
+              <p className="text-muted-foreground">{t.aiAssistant.subtitle}</p>
             </div>
           </div>
 
@@ -79,25 +82,25 @@ export function AIAssistant({ onNavigate }: AIAssistantProps) {
             <Card>
               <CardContent className="pt-6 text-center">
                 <Music className="w-6 h-6 mx-auto mb-2 text-purple-500" />
-                <div className="text-sm">Подбор по жанру</div>
+                <div className="text-sm">{t.aiAssistant.features.genreSelection}</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-6 text-center">
                 <Users className="w-6 h-6 mx-auto mb-2 text-pink-500" />
-                <div className="text-sm">Состав группы</div>
+                <div className="text-sm">{t.aiAssistant.features.groupComposition}</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-6 text-center">
                 <Calendar className="w-6 h-6 mx-auto mb-2 text-blue-500" />
-                <div className="text-sm">Планирование</div>
+                <div className="text-sm">{t.aiAssistant.features.planning}</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-6 text-center">
                 <TrendingUp className="w-6 h-6 mx-auto mb-2 text-green-500" />
-                <div className="text-sm">Аналитика</div>
+                <div className="text-sm">{t.aiAssistant.features.analytics}</div>
               </CardContent>
             </Card>
           </div>

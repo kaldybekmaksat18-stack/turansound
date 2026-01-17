@@ -22,12 +22,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import { useProfileTranslation } from '../lib/i18n/useProfileTranslation';
+import { useTranslation } from '../lib/i18n/LanguageContext';
 
 interface FinancialProfileProps {
   artistId: string;
 }
 
 export function FinancialProfile({ artistId }: FinancialProfileProps) {
+  const t = useProfileTranslation();
+  const { language } = useTranslation();
+  
+  // Названия месяцев в зависимости от языка
+  const monthNames = {
+    kk: ['Қаңтар', 'Ақпан', 'Наурыз', 'Сәуір', 'Мамыр', 'Маусым', 'Шілде', 'Тамыз', 'Қыркүйек', 'Қазан', 'Қараша', 'Желтоқсан'],
+    ru: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+    en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  };
+  
   const financialData = {
     totalEarnings: 4850000,
     currentMonth: 650000,
@@ -40,34 +52,132 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
   };
 
   const monthlyData = [
-    { month: 'Янв', earnings: 450000, bookings: 3 },
-    { month: 'Фев', earnings: 380000, bookings: 2 },
-    { month: 'Мар', earnings: 520000, bookings: 4 },
-    { month: 'Апр', earnings: 620000, bookings: 4 },
-    { month: 'Май', earnings: 580000, bookings: 3 },
-    { month: 'Июн', earnings: 650000, bookings: 4 }
+    { month: monthNames[language][0], earnings: 450000, bookings: 3 },
+    { month: monthNames[language][1], earnings: 380000, bookings: 2 },
+    { month: monthNames[language][2], earnings: 520000, bookings: 4 },
+    { month: monthNames[language][3], earnings: 620000, bookings: 4 },
+    { month: monthNames[language][4], earnings: 580000, bookings: 3 },
+    { month: monthNames[language][5], earnings: 650000, bookings: 4 }
   ];
 
+  const eventNames = {
+    wedding: t.eventTypes.wedding,
+    corporate: t.eventTypes.corporate,
+    birthday: t.eventTypes.birthday,
+  };
+
   const recentPayments = [
-    { id: '1', date: '2026-01-10', event: 'Свадьба в Rixos', amount: 450000, status: 'released' },
-    { id: '2', date: '2026-01-05', event: 'Корпоратив Tengri Bank', amount: 800000, status: 'released' },
-    { id: '3', date: '2025-12-28', event: 'День рождения', amount: 320000, status: 'released' },
-    { id: '4', date: '2025-12-20', event: 'Новогодний корпоратив', amount: 950000, status: 'released' }
+    { id: '1', date: '2026-01-10', event: eventNames.wedding, venue: ' в Rixos', amount: 450000, status: 'released' },
+    { id: '2', date: '2026-01-05', event: eventNames.corporate, venue: ' Tengri Bank', amount: 800000, status: 'released' },
+    { id: '3', date: '2025-12-28', event: eventNames.birthday, venue: '', amount: 320000, status: 'released' },
+    { id: '4', date: '2025-12-20', event: eventNames.corporate, venue: '', amount: 950000, status: 'released' }
   ];
 
   const upcomingPayments = [
-    { id: '1', date: '2026-02-15', event: 'Свадьба', amount: 500000, status: 'locked' },
-    { id: '2', date: '2026-02-20', event: 'Корпоратив', amount: 800000, status: 'locked' }
+    { id: '1', date: '2026-02-15', event: eventNames.wedding, venue: '', amount: 500000, status: 'locked' },
+    { id: '2', date: '2026-02-20', event: eventNames.corporate, venue: '', amount: 800000, status: 'locked' }
   ];
+
+  const translatedTexts = {
+    kk: {
+      totalBookings: 'Жалпы букингтар',
+      completedSuccessfully: 'Сәтті аяқталды',
+      monthlyGrowth: 'Айлық өсім',
+      financialReputation: 'Қаржылық беделділік',
+      excellentReputation: 'Тамаша беделділік',
+      punctuality: 'Уақытылылық',
+      reliability: 'Сенімділік',
+      noFailures: 'Сәтсіздіктерсіз',
+      reliablePerformer: 'Сенімді орындаушы',
+      topPerformers: 'Платформаның топ-5% орындаушысы',
+      upcomingPayments: 'Күтілетін төлемдер',
+      onEscrow: 'Эскроу шотында',
+      totalExpected: 'Барлығы күтілуде',
+      quickActions: 'Жылдам әрекеттер',
+      downloadReport: 'Кезең бойынша есепті жүктеу',
+      taxDeclaration: 'Салық декларациясы',
+      configurePayouts: 'Төлемдерді баптау',
+      earningsChart: 'Кірістер динамикасы',
+      lastSixMonths: 'Соңғы 6 ай',
+      oneMonth: '1 ай',
+      threeMonths: '3 ай',
+      sixMonths: '6 ай',
+      oneYear: '1 жыл',
+      paymentsHistory: 'Төлемдер тарихы',
+      export: 'Экспорттау',
+      paid: 'Төленді',
+      bookings: 'букингтер',
+    },
+    ru: {
+      totalBookings: 'Всего букингов',
+      completedSuccessfully: 'Завершено успешно',
+      monthlyGrowth: 'Рост за месяц',
+      financialReputation: 'Финансовая репутация',
+      excellentReputation: 'Отличная репутация',
+      punctuality: 'Пунктуальность',
+      reliability: 'Надёжность',
+      noFailures: 'Без срывов',
+      reliablePerformer: 'Надёжный исполнитель',
+      topPerformers: 'Вы в топ-5% артистов платформы',
+      upcomingPayments: 'Ожидаемые выплаты',
+      onEscrow: 'На эскроу-счёте',
+      totalExpected: 'Итого ожидается',
+      quickActions: 'Быстрые действия',
+      downloadReport: 'Скачать отчёт за период',
+      taxDeclaration: 'Налоговая декларация',
+      configurePayouts: 'Настроить выплаты',
+      earningsChart: 'Динамика доходов',
+      lastSixMonths: 'Последние 6 месяцев',
+      oneMonth: '1 месяц',
+      threeMonths: '3 месяца',
+      sixMonths: '6 месяцев',
+      oneYear: '1 год',
+      paymentsHistory: 'История выплат',
+      export: 'Экспорт',
+      paid: 'Выплачено',
+      bookings: 'букингов',
+    },
+    en: {
+      totalBookings: 'Total Bookings',
+      completedSuccessfully: 'Completed Successfully',
+      monthlyGrowth: 'Monthly Growth',
+      financialReputation: 'Financial Reputation',
+      excellentReputation: 'Excellent Reputation',
+      punctuality: 'Punctuality',
+      reliability: 'Reliability',
+      noFailures: 'No Failures',
+      reliablePerformer: 'Reliable Performer',
+      topPerformers: 'You are in the top 5% of platform artists',
+      upcomingPayments: 'Upcoming Payments',
+      onEscrow: 'On Escrow',
+      totalExpected: 'Total Expected',
+      quickActions: 'Quick Actions',
+      downloadReport: 'Download Period Report',
+      taxDeclaration: 'Tax Declaration',
+      configurePayouts: 'Configure Payouts',
+      earningsChart: 'Earnings Dynamics',
+      lastSixMonths: 'Last 6 Months',
+      oneMonth: '1 Month',
+      threeMonths: '3 Months',
+      sixMonths: '6 Months',
+      oneYear: '1 Year',
+      paymentsHistory: 'Payments History',
+      export: 'Export',
+      paid: 'Paid',
+      bookings: 'bookings',
+    }
+  };
+
+  const txt = translatedTexts[language];
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2">Финансовый профиль</h1>
+          <h1 className="mb-2">{t.financial.title}</h1>
           <p className="text-muted-foreground">
-            Управление доходами и финансовой репутацией
+            {t.financial.subtitle}
           </p>
         </div>
 
@@ -84,7 +194,7 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                 </Badge>
               </div>
               <div className="text-2xl mb-1">₸{(financialData.totalEarnings / 1000000).toFixed(1)}M</div>
-              <div className="text-sm text-muted-foreground">Всего заработано</div>
+              <div className="text-sm text-muted-foreground">{t.financial.stats.totalEarnings}</div>
             </CardContent>
           </Card>
 
@@ -97,7 +207,7 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                 <ArrowUpRight className="w-5 h-5 text-green-600" />
               </div>
               <div className="text-2xl mb-1">₸{financialData.currentMonth.toLocaleString()}</div>
-              <div className="text-sm text-muted-foreground">Этот месяц</div>
+              <div className="text-sm text-muted-foreground">{t.financial.stats.thisMonth}</div>
             </CardContent>
           </Card>
 
@@ -110,7 +220,7 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                 <Clock className="w-5 h-5 text-yellow-600" />
               </div>
               <div className="text-2xl mb-1">₸{(financialData.escrowBalance / 1000).toFixed(0)}K</div>
-              <div className="text-sm text-muted-foreground">На эскроу</div>
+              <div className="text-sm text-muted-foreground">{t.financial.stats.escrowBalance}</div>
             </CardContent>
           </Card>
 
@@ -122,7 +232,7 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                 </div>
               </div>
               <div className="text-2xl mb-1">₸{financialData.averageBooking.toLocaleString()}</div>
-              <div className="text-sm text-muted-foreground">Средний чек</div>
+              <div className="text-sm text-muted-foreground">{t.financial.stats.averageBooking}</div>
             </CardContent>
           </Card>
         </div>
@@ -134,9 +244,9 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <h3>Динамика доходов</h3>
+                  <h3>{txt.earningsChart}</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Последние 6 месяцев
+                    {txt.lastSixMonths}
                   </p>
                 </div>
                 <Select defaultValue="6months">
@@ -144,10 +254,10 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1month">1 месяц</SelectItem>
-                    <SelectItem value="3months">3 месяца</SelectItem>
-                    <SelectItem value="6months">6 месяцев</SelectItem>
-                    <SelectItem value="1year">1 год</SelectItem>
+                    <SelectItem value="1month">{txt.oneMonth}</SelectItem>
+                    <SelectItem value="3months">{txt.threeMonths}</SelectItem>
+                    <SelectItem value="6months">{txt.sixMonths}</SelectItem>
+                    <SelectItem value="1year">{txt.oneYear}</SelectItem>
                   </SelectContent>
                 </Select>
               </CardHeader>
@@ -163,7 +273,7 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                           <span className="text-sm font-medium">{data.month}</span>
                           <div className="flex items-center gap-3">
                             <Badge variant="secondary" className="text-xs">
-                              {data.bookings} букингов
+                              {data.bookings} {txt.bookings}
                             </Badge>
                             <span className="text-sm font-medium">
                               ₸{data.earnings.toLocaleString()}
@@ -184,15 +294,15 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                 <div className="mt-6 pt-6 border-t grid grid-cols-3 gap-4 text-center">
                   <div>
                     <div className="text-2xl mb-1">{financialData.bookingsCount}</div>
-                    <div className="text-xs text-muted-foreground">Всего букингов</div>
+                    <div className="text-xs text-muted-foreground">{txt.totalBookings}</div>
                   </div>
                   <div>
                     <div className="text-2xl mb-1">94%</div>
-                    <div className="text-xs text-muted-foreground">Завершено успешно</div>
+                    <div className="text-xs text-muted-foreground">{txt.completedSuccessfully}</div>
                   </div>
                   <div>
                     <div className="text-2xl mb-1 text-green-600">+23%</div>
-                    <div className="text-xs text-muted-foreground">Рост за месяц</div>
+                    <div className="text-xs text-muted-foreground">{txt.monthlyGrowth}</div>
                   </div>
                 </div>
               </CardContent>
@@ -202,10 +312,10 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <h3>История выплат</h3>
+                  <h3>{txt.paymentsHistory}</h3>
                   <Button variant="outline" size="sm">
                     <Download className="w-4 h-4 mr-2" />
-                    Экспорт
+                    {txt.export}
                   </Button>
                 </div>
               </CardHeader>
@@ -221,9 +331,9 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                           <CreditCard className="w-5 h-5 text-green-600" />
                         </div>
                         <div>
-                          <div className="font-medium mb-1">{payment.event}</div>
+                          <div className="font-medium mb-1">{payment.event}{payment.venue}</div>
                           <div className="text-sm text-muted-foreground">
-                            {new Date(payment.date).toLocaleDateString('ru-RU')}
+                            {new Date(payment.date).toLocaleDateString(language === 'kk' ? 'kk-KZ' : language === 'ru' ? 'ru-RU' : 'en-US')}
                           </div>
                         </div>
                       </div>
@@ -231,7 +341,7 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                         <div className="font-medium text-green-600">
                           +₸{payment.amount.toLocaleString()}
                         </div>
-                        <div className="text-xs text-muted-foreground">Выплачено</div>
+                        <div className="text-xs text-muted-foreground">{txt.paid}</div>
                       </div>
                     </div>
                   ))}
@@ -245,7 +355,7 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
             {/* Financial Reputation */}
             <Card>
               <CardHeader>
-                <h3>Финансовая репутация</h3>
+                <h3>{txt.financialReputation}</h3>
               </CardHeader>
               <CardContent>
                 <div className="text-center mb-6">
@@ -282,13 +392,13 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                     </div>
                   </div>
                   <div className="text-sm text-muted-foreground mt-2">
-                    Отличная репутация
+                    {txt.excellentReputation}
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Пунктуальность</span>
+                    <span className="text-sm text-muted-foreground">{txt.punctuality}</span>
                     <div className="flex items-center gap-2">
                       <div className="h-2 w-20 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-green-600 rounded-full" style={{ width: '98%' }} />
@@ -297,7 +407,7 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Надёжность</span>
+                    <span className="text-sm text-muted-foreground">{txt.reliability}</span>
                     <div className="flex items-center gap-2">
                       <div className="h-2 w-20 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-green-600 rounded-full" style={{ width: '95%' }} />
@@ -306,7 +416,7 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Без срывов</span>
+                    <span className="text-sm text-muted-foreground">{txt.noFailures}</span>
                     <div className="flex items-center gap-2">
                       <div className="h-2 w-20 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-green-600 rounded-full" style={{ width: '100%' }} />
@@ -318,10 +428,10 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
 
                 <div className="mt-4 p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
                   <div className="text-sm font-medium text-green-900 dark:text-green-100 mb-1">
-                    🏆 Надёжный исполнитель
+                    🏆 {txt.reliablePerformer}
                   </div>
                   <div className="text-xs text-green-700 dark:text-green-300">
-                    Вы в топ-5% артистов платформы
+                    {txt.topPerformers}
                   </div>
                 </div>
               </CardContent>
@@ -330,7 +440,7 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
             {/* Upcoming Payments */}
             <Card>
               <CardHeader>
-                <h3>Ожидаемые выплаты</h3>
+                <h3>{txt.upcomingPayments}</h3>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -344,15 +454,15 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
                           <Clock className="w-5 h-5 text-yellow-600" />
                         </div>
                         <div className="flex-1">
-                          <div className="font-medium mb-1">{payment.event}</div>
+                          <div className="font-medium mb-1">{payment.event}{payment.venue}</div>
                           <div className="text-sm text-muted-foreground mb-2">
-                            {new Date(payment.date).toLocaleDateString('ru-RU')}
+                            {new Date(payment.date).toLocaleDateString(language === 'kk' ? 'kk-KZ' : language === 'ru' ? 'ru-RU' : 'en-US')}
                           </div>
                           <div className="font-medium text-yellow-600">
                             ₸{payment.amount.toLocaleString()}
                           </div>
                           <div className="text-xs text-muted-foreground mt-1">
-                            На эскроу-счёте
+                            {txt.onEscrow}
                           </div>
                         </div>
                       </div>
@@ -362,7 +472,7 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
 
                 <div className="mt-4 pt-4 border-t">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Итого ожидается</span>
+                    <span className="text-muted-foreground">{txt.totalExpected}</span>
                     <span className="font-medium">₸{financialData.escrowBalance.toLocaleString()}</span>
                   </div>
                 </div>
@@ -372,20 +482,20 @@ export function FinancialProfile({ artistId }: FinancialProfileProps) {
             {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <h3>Быстрые действия</h3>
+                <h3>{txt.quickActions}</h3>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button variant="outline" className="w-full justify-start">
                   <Download className="w-4 h-4 mr-2" />
-                  Скачать отчёт за период
+                  {txt.downloadReport}
                 </Button>
                 <Button variant="outline" className="w-full justify-start">
                   <PieChart className="w-4 h-4 mr-2" />
-                  Налоговая декларация
+                  {txt.taxDeclaration}
                 </Button>
                 <Button variant="outline" className="w-full justify-start">
                   <CreditCard className="w-4 h-4 mr-2" />
-                  Настроить выплаты
+                  {txt.configurePayouts}
                 </Button>
               </CardContent>
             </Card>

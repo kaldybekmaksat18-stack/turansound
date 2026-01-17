@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import { useProfileTranslation } from '../lib/i18n/useProfileTranslation';
 
 interface ContractsLegalProps {
   userRole: 'artist' | 'client';
@@ -47,42 +48,42 @@ interface Contract {
 const contractTemplates = [
   {
     id: 'wedding',
-    name: 'Свадебное мероприятие',
+    name: 'wedding', // храним ключи для перевода
     description: 'Стандартный договор на свадебное выступление',
     icon: '💒',
     clauses: 15
   },
   {
     id: 'corporate',
-    name: 'Корпоративное мероприятие',
+    name: 'corporate',
     description: 'Договор для корпоративных клиентов',
     icon: '🏢',
     clauses: 18
   },
   {
     id: 'festival',
-    name: 'Фестиваль/Концерт',
+    name: 'festival',
     description: 'Для публичных мероприятий и фестивалей',
     icon: '🎪',
     clauses: 22
   },
   {
     id: 'government',
-    name: 'Государственное мероприятие',
+    name: 'government',
     description: 'Специальный шаблон для госзаказов',
     icon: '🏛️',
     clauses: 25
   },
   {
     id: 'restaurant',
-    name: 'Ресторан/Лаунж',
+    name: 'restaurant',
     description: 'Регулярные выступления в заведениях',
     icon: '🍽️',
     clauses: 12
   },
   {
     id: 'private',
-    name: 'Частное мероприятие',
+    name: 'private',
     description: 'День рождения, юбилей и др.',
     icon: '🎉',
     clauses: 14
@@ -138,14 +139,15 @@ const mockContracts: Contract[] = [
 
 export function ContractsLegal({ userRole }: ContractsLegalProps) {
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+  const { t } = useProfileTranslation();
 
   const getStatusBadge = (status: Contract['status']) => {
     const variants: Record<typeof status, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-      draft: { label: 'Черновик', variant: 'secondary' },
-      pending: { label: 'Ожидает подписи', variant: 'outline' },
-      signed: { label: 'Подписан', variant: 'default' },
-      active: { label: 'Активен', variant: 'default' },
-      completed: { label: 'Завершён', variant: 'outline' }
+      draft: { label: t.contracts.statuses.draft, variant: 'secondary' },
+      pending: { label: t.contracts.statuses.pending, variant: 'outline' },
+      signed: { label: t.contracts.statuses.signed, variant: 'default' },
+      active: { label: t.contracts.statuses.active, variant: 'default' },
+      completed: { label: t.contracts.statuses.completed, variant: 'outline' }
     };
     return <Badge variant={variants[status].variant}>{variants[status].label}</Badge>;
   };
@@ -169,17 +171,17 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2">Контракты и юридические документы</h1>
+          <h1 className="mb-2">{t.contracts.title}</h1>
           <p className="text-muted-foreground">
-            Смарт-контракты с автоматическим исполнением условий
+            {t.contracts.subtitle}
           </p>
         </div>
 
         <Tabs defaultValue="contracts" className="w-full">
           <TabsList>
-            <TabsTrigger value="contracts">Мои контракты</TabsTrigger>
-            <TabsTrigger value="templates">Шаблоны</TabsTrigger>
-            <TabsTrigger value="signatures">ЭЦП</TabsTrigger>
+            <TabsTrigger value="contracts">{t.contracts.tabs.active}</TabsTrigger>
+            <TabsTrigger value="templates">{t.contracts.tabs.templates}</TabsTrigger>
+            <TabsTrigger value="signatures">{t.contracts.tabs.signatures}</TabsTrigger>
           </TabsList>
 
           {/* Contracts List */}
@@ -192,7 +194,7 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-2xl mb-1">8</div>
-                        <div className="text-sm text-muted-foreground">Всего контрактов</div>
+                        <div className="text-sm text-muted-foreground">{t.contracts.stats.totalContracts}</div>
                       </div>
                       <FileText className="w-8 h-8 text-purple-600" />
                     </div>
@@ -203,7 +205,7 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-2xl mb-1">3</div>
-                        <div className="text-sm text-muted-foreground">Активных</div>
+                        <div className="text-sm text-muted-foreground">{t.contracts.stats.active}</div>
                       </div>
                       <CheckCircle className="w-8 h-8 text-green-600" />
                     </div>
@@ -214,7 +216,7 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-2xl mb-1">₸1.3M</div>
-                        <div className="text-sm text-muted-foreground">На эскроу</div>
+                        <div className="text-sm text-muted-foreground">{t.contracts.stats.onEscrow}</div>
                       </div>
                       <Lock className="w-8 h-8 text-yellow-600" />
                     </div>
@@ -225,7 +227,7 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-2xl mb-1">100%</div>
-                        <div className="text-sm text-muted-foreground">Надёжность</div>
+                        <div className="text-sm text-muted-foreground">{t.contracts.stats.reliability}</div>
                       </div>
                       <Shield className="w-8 h-8 text-blue-600" />
                     </div>
@@ -278,7 +280,7 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                             <div className="flex gap-2">
                               <Button variant="outline" size="sm">
                                 <Eye className="w-4 h-4 mr-2" />
-                                Открыть
+                                {t.contracts.actions.view}
                               </Button>
                               <Button variant="outline" size="sm">
                                 <Download className="w-4 h-4 mr-2" />
@@ -299,17 +301,17 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                   <>
                     <Card>
                       <CardHeader>
-                        <h3>Детали контракта</h3>
+                        <h3>{t.contracts.details.title}</h3>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div>
-                          <div className="text-sm text-muted-foreground mb-1">Тип мероприятия</div>
+                          <div className="text-sm text-muted-foreground mb-1">{t.contracts.details.eventType}</div>
                           <div className="font-medium">
-                            {contractTemplates.find(t => t.id === selectedContract.type)?.name}
+                            {t.contracts.templates[contract.type as keyof typeof t.contracts.templates] as string}
                           </div>
                         </div>
                         <div>
-                          <div className="text-sm text-muted-foreground mb-1">Дата события</div>
+                          <div className="text-sm text-muted-foreground mb-1">{t.contracts.details.eventDate}</div>
                           <div className="font-medium">
                             {new Date(selectedContract.eventDate).toLocaleDateString('ru-RU', {
                               day: 'numeric',
@@ -319,14 +321,14 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                           </div>
                         </div>
                         <div>
-                          <div className="text-sm text-muted-foreground mb-1">Стоимость</div>
+                          <div className="text-sm text-muted-foreground mb-1">{t.contracts.details.amount}</div>
                           <div className="font-medium text-lg">
                             ₸{selectedContract.amount.toLocaleString()}
                           </div>
                         </div>
                         {selectedContract.signedDate && (
                           <div>
-                            <div className="text-sm text-muted-foreground mb-1">Дата подписания</div>
+                            <div className="text-sm text-muted-foreground mb-1">{t.contracts.details.signedDate}</div>
                             <div className="font-medium">
                               {new Date(selectedContract.signedDate).toLocaleDateString('ru-RU')}
                             </div>
@@ -337,43 +339,43 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
 
                     <Card>
                       <CardHeader>
-                        <h3>Условия и штрафы</h3>
+                        <h3>{t.contracts.details.termsAndPenalties}</h3>
                       </CardHeader>
                       <CardContent className="space-y-3">
                         <div className="p-3 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
                           <div className="text-sm font-medium text-red-900 dark:text-red-100 mb-1">
-                            Отмена артистом
+                            {t.contracts.penalties.artistCancellation}
                           </div>
                           <div className="text-xs text-red-700 dark:text-red-300">
-                            Штраф: ₸{selectedContract.penalties.artistCancellation.toLocaleString()} (50%)
+                            {t.contracts.penalties.penalty} ₸{selectedContract.penalties.artistCancellation.toLocaleString()} (50%)
                           </div>
                         </div>
 
                         <div className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800">
                           <div className="text-sm font-medium text-orange-900 dark:text-orange-100 mb-1">
-                            Отмена заказчиком
+                            {t.contracts.penalties.clientCancellation}
                           </div>
                           <div className="text-xs text-orange-700 dark:text-orange-300">
-                            За 7+ дней: возврат 90%<br />
-                            Менее 7 дней: ₸{selectedContract.penalties.clientCancellation.toLocaleString()}
+                            {t.contracts.penalties.refund7days}<br />
+                            {t.contracts.penalties.refundLess7days} ₸{selectedContract.penalties.clientCancellation.toLocaleString()}
                           </div>
                         </div>
 
                         <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
                           <div className="text-sm font-medium text-yellow-900 dark:text-yellow-100 mb-1">
-                            Опоздание артиста
+                            {t.contracts.penalties.lateArrival}
                           </div>
                           <div className="text-xs text-yellow-700 dark:text-yellow-300">
-                            Более 30 мин: ₸{selectedContract.penalties.lateArrival.toLocaleString()}
+                            {t.contracts.penalties.moreThan30min} ₸{selectedContract.penalties.lateArrival.toLocaleString()}
                           </div>
                         </div>
 
                         <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
                           <div className="text-sm font-medium text-green-900 dark:text-green-100 mb-1">
-                            ✓ Форс-мажор
+                            {t.contracts.penalties.forceMajeure}
                           </div>
                           <div className="text-xs text-green-700 dark:text-green-300">
-                            Полный возврат средств без штрафов
+                            {t.contracts.penalties.forceMajeureDesc}
                           </div>
                         </div>
                       </CardContent>
@@ -381,20 +383,20 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
 
                     <Card>
                       <CardHeader>
-                        <h3>Эскроу-счёт</h3>
+                        <h3>{t.contracts.details.escrowTitle}</h3>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-muted-foreground">Статус</span>
+                            <span className="text-sm text-muted-foreground">{t.contracts.escrow.status}</span>
                             <Badge variant={selectedContract.escrowStatus === 'locked' ? 'secondary' : 'outline'}>
-                              {selectedContract.escrowStatus === 'locked' ? '🔒 Заблокировано' : '✅ Выплачено'}
+                              {selectedContract.escrowStatus === 'locked' ? t.contracts.escrow.lockedBadge : t.contracts.escrow.releasedBadge}
                             </Badge>
                           </div>
                           {selectedContract.escrowStatus === 'locked' && (
                             <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
                               <div className="text-sm text-blue-900 dark:text-blue-100">
-                                Деньги будут автоматически переведены артисту через 24 часа после мероприятия
+                                {t.contracts.escrow.autoTransfer}
                               </div>
                             </div>
                           )}
@@ -406,7 +408,7 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                   <Card>
                     <CardContent className="pt-6 text-center text-muted-foreground">
                       <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                      <p>Выберите контракт для просмотра деталей</p>
+                      <p>{t.contracts.selectToView}</p>
                     </CardContent>
                   </Card>
                 )}
@@ -417,38 +419,41 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
           {/* Templates */}
           <TabsContent value="templates" className="mt-6">
             <div className="mb-6">
-              <h2 className="mb-2">Шаблоны контрактов</h2>
+              <h2 className="mb-2">{t.contracts.templates.title}</h2>
               <p className="text-muted-foreground">
-                Готовые юридические шаблоны для разных типов мероприятий
+                {t.contracts.templates.description}
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {contractTemplates.map((template) => (
-                <Card key={template.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardContent className="pt-6">
-                    <div className="text-4xl mb-3">{template.icon}</div>
-                    <h3 className="mb-2">{template.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      {template.description}
-                    </p>
-                    <div className="flex items-center gap-2 mb-4">
-                      <Badge variant="secondary">{template.clauses} пунктов</Badge>
-                      <Badge variant="outline">Готов к использованию</Badge>
-                    </div>
-                    <div className="space-y-2">
-                      <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Создать контракт
-                      </Button>
-                      <Button variant="outline" className="w-full">
-                        <Eye className="w-4 h-4 mr-2" />
-                        Предпросмотр
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {contractTemplates.map((template) => {
+                const descKey = `${template.name}Desc` as keyof typeof t.contracts.templates;
+                return (
+                  <Card key={template.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardContent className="pt-6">
+                      <div className="text-4xl mb-3">{template.icon}</div>
+                      <h3 className="mb-2">{t.contracts.templates[template.name as keyof typeof t.contracts.templates] as string}</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {t.contracts.templates[descKey] as string}
+                      </p>
+                      <div className="flex items-center gap-2 mb-4">
+                        <Badge variant="secondary">{template.clauses} {t.contracts.templates.clauses}</Badge>
+                        <Badge variant="outline">{t.contracts.templates.readyToUse}</Badge>
+                      </div>
+                      <div className="space-y-2">
+                        <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                          <Plus className="w-4 h-4 mr-2" />
+                          {t.contracts.actions.createContract}
+                        </Button>
+                        <Button variant="outline" className="w-full">
+                          <Eye className="w-4 h-4 mr-2" />
+                          {t.contracts.actions.preview}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </TabsContent>
 
@@ -462,9 +467,9 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                       <FileSignature className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                      <h3>Электронная цифровая подпись (ЭЦП)</h3>
+                      <h3>{t.contracts.digitalSignature.title}</h3>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Юридически значимая подпись для контрактов
+                        {t.contracts.digitalSignature.subtitle}
                       </p>
                     </div>
                   </div>
@@ -472,37 +477,37 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                 <CardContent className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="mb-4">Ваша ЭЦП</h4>
+                      <h4 className="mb-4">{t.contracts.digitalSignature.yourSignature}</h4>
                       <div className="p-4 bg-muted rounded-lg mb-4">
-                        <div className="text-sm text-muted-foreground mb-2">Статус</div>
+                        <div className="text-sm text-muted-foreground mb-2">{t.contracts.digitalSignature.status}</div>
                         <Badge variant="outline" className="text-green-600 border-green-600">
                           <CheckCircle className="w-3 h-3 mr-1" />
-                          Активна
+                          {t.contracts.digitalSignature.active}
                         </Badge>
                       </div>
                       <div className="p-4 bg-muted rounded-lg mb-4">
-                        <div className="text-sm text-muted-foreground mb-2">Сертификат</div>
+                        <div className="text-sm text-muted-foreground mb-2">{t.contracts.digitalSignature.certificate}</div>
                         <div className="text-sm font-mono">
                           RU-12345678-ABCD-EFGH
                         </div>
                       </div>
                       <div className="p-4 bg-muted rounded-lg">
-                        <div className="text-sm text-muted-foreground mb-2">Срок действия</div>
-                        <div className="text-sm">До 15 декабря 2027</div>
+                        <div className="text-sm text-muted-foreground mb-2">{t.contracts.digitalSignature.validUntil}</div>
+                        <div className="text-sm">15.12.2027</div>
                       </div>
                     </div>
 
                     <div>
-                      <h4 className="mb-4">Интеграции</h4>
+                      <h4 className="mb-4">{t.contracts.digitalSignature.integrations}</h4>
                       <div className="space-y-3">
                         <div className="p-4 rounded-lg border flex items-center gap-3">
                           <div className="w-10 h-10 bg-blue-100 dark:bg-blue-950 rounded-lg flex items-center justify-center">
                             <Shield className="w-5 h-5 text-blue-600" />
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium mb-1">Blockchain ID</div>
+                            <div className="font-medium mb-1">{t.contracts.digitalSignature.blockchainId}</div>
                             <div className="text-xs text-muted-foreground">
-                              Децентрализованная система
+                              {t.contracts.digitalSignature.blockchainDesc}
                             </div>
                           </div>
                           <CheckCircle className="w-5 h-5 text-green-600" />
@@ -513,13 +518,13 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                             <FileSignature className="w-5 h-5 text-purple-600" />
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium mb-1">GovTech KZ</div>
+                            <div className="font-medium mb-1">{t.contracts.digitalSignature.govTechKz}</div>
                             <div className="text-xs text-muted-foreground">
-                              Государственная система ЭЦП
+                              {t.contracts.digitalSignature.govTechDesc}
                             </div>
                           </div>
                           <Button variant="outline" size="sm">
-                            Подключить
+                            {t.contracts.actions.connect}
                           </Button>
                         </div>
                       </div>
@@ -531,17 +536,17 @@ export function ContractsLegal({ userRole }: ContractsLegalProps) {
                       <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                       <div>
                         <div className="font-medium text-blue-900 dark:text-blue-100 mb-1">
-                          Юридическая сила
+                          {t.contracts.digitalSignature.legalPower}
                         </div>
                         <div className="text-sm text-blue-700 dark:text-blue-300">
-                          Все контракты с ЭЦП имеют полную юридическую силу согласно законодательству РК и признаются в суде
+                          {t.contracts.digitalSignature.legalPowerDesc}
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <h4 className="mb-4">История подписей</h4>
+                    <h4 className="mb-4">{t.contracts.digitalSignature.signatureHistory}</h4>
                     <div className="space-y-2">
                       {[
                         { date: '2026-01-15', document: 'Свадебный контракт #1', client: 'Асель Мукашева' },

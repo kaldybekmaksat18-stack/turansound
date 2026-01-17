@@ -1,38 +1,62 @@
-# ⚡ БЫСТРОЕ РЕШЕНИЕ: Нет стилей в production
+# ⚡ БЫСТРОЕ РЕШЕНИЕ: Tailwind CSS v4
 
-## ❌ Проблема
-Сайт без дизайна после деплоя на Vercel/Netlify
+## ✅ Что исправлено
 
-## ✅ Решение (УЖЕ ИСПРАВЛЕНО)
+### 1. `/index.css` - правильный entrypoint для v4
+```css
+@import "tailwindcss";
 
-### Что было сделано:
-
-1. **Добавлено в `/styles/globals.css`:**
-   ```css
-   @import "tailwindcss";
-   ```
-
-2. **Создан `/tailwind.config.js`**
-
-3. **Создан `/postcss.config.js`**
-
-4. **Обновлен `/vite.config.ts`**
-
-## 🚀 Как задеплоить
-
-```bash
-git add .
-git commit -m "Fix: CSS configuration"
-git push
+@import "./styles/globals.css";
 ```
 
-Vercel/Netlify автоматически пересоберёт за 2-3 минуты.
+### 2. `/postcss.config.js` - правильный плагин для v4
+```js
+export default {
+  plugins: {
+    '@tailwindcss/postcss': {},
+  },
+}
+```
 
-## 📚 Подробности
-
-См. [CSS_FIX.md](./CSS_FIX.md) для полной информации.
+### 3. `/package.json` - добавлен обязательный пакет
+```json
+{
+  "devDependencies": {
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0"
+  }
+}
+```
 
 ---
 
-**Статус:** ✅ Исправлено  
-**Дата:** 16 января 2026
+## 🚀 Команды
+
+```bash
+# 1. Установить зависимости
+npm install
+
+# 2. Проверить локально
+npm run build
+npm run preview
+
+# 3. Закоммитить
+git add .
+git commit -m "fix: correct Tailwind v4 setup"
+git push
+```
+
+---
+
+## 🔑 Ключевые отличия v3 vs v4
+
+| v3 | v4 |
+|----|-----|
+| `@tailwind base/components/utilities` | `@import "tailwindcss"` |
+| `tailwindcss` plugin | `@tailwindcss/postcss` plugin |
+| Только `tailwindcss` пакет | `tailwindcss` + `@tailwindcss/postcss` |
+
+---
+
+**Статус:** ✅ Готово к деплою  
+**Детали:** [CSS_V4_FIX.md](./CSS_V4_FIX.md)

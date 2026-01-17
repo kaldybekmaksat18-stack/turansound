@@ -18,6 +18,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { ScrollArea } from './ui/scroll-area';
+import { useProfileTranslation } from '../lib/i18n/useProfileTranslation';
 
 interface NotificationCenterProps {
   onClose?: () => void;
@@ -37,25 +38,26 @@ interface Notification {
 }
 
 export function NotificationCenter({ onClose }: NotificationCenterProps) {
+  const t = useProfileTranslation();
   const [activeTab, setActiveTab] = useState('all');
   
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: '1',
       type: 'booking',
-      title: 'Новое бронирование',
+      title: t.notifications.types.newBooking,
       message: 'Tengri Capital забронировал вас на 20 февраля',
       time: '5 минут назад',
       read: false,
       action: {
-        label: 'Просмотреть',
+        label: t.common.view,
         onClick: () => console.log('View booking')
       }
     },
     {
       id: '2',
       type: 'payment',
-      title: 'Выплата получена',
+      title: t.notifications.types.paymentReceived,
       message: '₸450,000 зачислено на ваш счёт',
       time: '2 часа назад',
       read: false
@@ -63,19 +65,19 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
     {
       id: '3',
       type: 'review',
-      title: 'Новый отзыв',
+      title: t.notifications.types.newReview,
       message: 'Асель Мукашева оставила отзыв: ⭐⭐⭐⭐⭐',
       time: '5 часов назад',
       read: true,
       action: {
-        label: 'Прочитать',
+        label: t.notifications.actions.read,
         onClick: () => console.log('Read review')
       }
     },
     {
       id: '4',
       type: 'system',
-      title: 'Верификация завершена',
+      title: t.notifications.types.verificationComplete,
       message: 'Ваш профиль успешно верифицирован',
       time: '1 день назад',
       read: true
@@ -83,7 +85,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
     {
       id: '5',
       type: 'message',
-      title: 'Новое сообщение',
+      title: t.notifications.types.newMessage,
       message: 'У вас новое сообщение от Бакыт Ахметов',
       time: '2 дня назад',
       read: true
@@ -131,7 +133,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bell className="w-5 h-5" />
-            <h3>Уведомления</h3>
+            <h3>{t.notifications.title}</h3>
             {unreadCount > 0 && (
               <Badge className="bg-red-600">{unreadCount}</Badge>
             )}
@@ -140,7 +142,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
             {unreadCount > 0 && (
               <Button variant="ghost" size="sm" onClick={markAllAsRead}>
                 <Check className="w-4 h-4 mr-2" />
-                Прочитать все
+                {t.common.markAllRead}
               </Button>
             )}
             {onClose && (
@@ -154,7 +156,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full grid grid-cols-5 mb-4">
-            <TabsTrigger value="all">Все</TabsTrigger>
+            <TabsTrigger value="all">{t.notifications.tabs.all}</TabsTrigger>
             <TabsTrigger value="booking">
               <Calendar className="w-4 h-4" />
             </TabsTrigger>
@@ -174,7 +176,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
               {filteredNotifications.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <Bell className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                  <p>Нет уведомлений</p>
+                  <p>{t.notifications.empty}</p>
                 </div>
               ) : (
                 filteredNotifications.map((notification) => (

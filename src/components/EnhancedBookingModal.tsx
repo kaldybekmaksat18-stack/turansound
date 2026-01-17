@@ -36,6 +36,8 @@ import { Checkbox } from './ui/checkbox';
 import { Separator } from './ui/separator';
 import { useBookings } from '../hooks/useBookings';
 import { toast } from 'sonner@2.0.3';
+import { useLanguage } from '../lib/i18n/LanguageContext';
+import { bookingTexts } from '../lib/i18n/bookingTexts';
 
 interface EnhancedBookingModalProps {
   artist: Artist;
@@ -46,49 +48,52 @@ interface EnhancedBookingModalProps {
 
 interface AdditionalService {
   id: string;
-  name: string;
-  description: string;
+  nameKey: keyof typeof bookingTexts['ru'];
+  descKey: keyof typeof bookingTexts['ru'];
   price: number;
   icon: any;
   category: 'equipment' | 'personnel' | 'production';
 }
 
-const additionalServices: AdditionalService[] = [
-  {
-    id: 'sound',
-    name: 'Профессиональная звуковая система',
-    description: 'Полный комплект звукового оборудования + звукорежиссёр',
-    price: 150000,
-    icon: Radio,
-    category: 'equipment'
-  },
-  {
-    id: 'lighting',
-    name: 'Световое оборудование',
-    description: 'Профессиональный свет + светорежиссёр',
-    price: 120000,
-    icon: Lightbulb,
-    category: 'equipment'
-  },
-  {
-    id: 'video',
-    name: 'Видеосъёмка',
-    description: '2 камеры, профессиональный монтаж',
-    price: 180000,
-    icon: Camera,
-    category: 'production'
-  },
-  {
-    id: 'host',
-    name: 'Ведущий мероприятия',
-    description: 'Опытный тамада/ведущий',
-    price: 100000,
-    icon: Mic,
-    category: 'personnel'
-  }
-];
-
 export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: EnhancedBookingModalProps) {
+  const { language } = useLanguage();
+  const bt = bookingTexts[language];
+  
+  const additionalServices: AdditionalService[] = [
+    {
+      id: 'sound',
+      nameKey: 'soundSystem',
+      descKey: 'soundSystemDesc',
+      price: 150000,
+      icon: Radio,
+      category: 'equipment'
+    },
+    {
+      id: 'lighting',
+      nameKey: 'lightingEquipment',
+      descKey: 'lightingEquipmentDesc',
+      price: 120000,
+      icon: Lightbulb,
+      category: 'equipment'
+    },
+    {
+      id: 'video',
+      nameKey: 'videoProduction',
+      descKey: 'videoProductionDesc',
+      price: 180000,
+      icon: Camera,
+      category: 'production'
+    },
+    {
+      id: 'host',
+      nameKey: 'eventHost',
+      descKey: 'eventHostDesc',
+      price: 100000,
+      icon: Mic,
+      category: 'personnel'
+    }
+  ];
+
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createBooking } = useBookings(userId || null);
@@ -110,7 +115,6 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
   });
 
   // Dynamic pricing
-  // Handle both old priceRange format and new priceFrom/priceTo format
   const basePrice = (artist as any).priceRange?.min ?? (artist as any).priceFrom ?? 100000;
   const servicesTotal = formData.selectedServices.reduce((sum, serviceId) => {
     const service = additionalServices.find(s => s.id === serviceId);
@@ -118,20 +122,19 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
   }, 0);
   const durationMultiplier = parseFloat(formData.duration) / 3;
   const totalPrice = (basePrice * durationMultiplier) + servicesTotal;
-  const escrowFee = totalPrice * 0.03; // 3% платформенная комиссия
+  const escrowFee = totalPrice * 0.03;
   const finalPrice = totalPrice + escrowFee;
 
   const handleSubmit = async () => {
     if (!userId) {
-      toast.error('Необходимо авторизоваться');
+      toast.error(bt.loginRequired);
       return;
     }
 
-    // Check if artist ID is a valid UUID (from database)
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(artist.id)) {
-      toast.error('Невозможно забронировать этого артиста', {
-        description: 'Этот артист из демо-данных. Пожалуйста, выберите артиста из каталога после загрузки базы данных.',
+      toast.error(bt.demoArtistError, {
+        description: bt.demoArtistErrorDesc,
         duration: 5000
       });
       return;
@@ -140,15 +143,14 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
     setIsSubmitting(true);
 
     try {
-      // Маппинг русских названий типов мероприятий на английские
       const eventTypeMap: Record<string, string> = {
-        'wedding': 'Свадьба',
-        'corporate': 'Корпоратив',
-        'birthday': 'День рождения',
-        'festival': 'Фестиваль',
-        'concert': 'Концерт',
-        'restaurant': 'Ресторан',
-        'government': 'Государственное мероприятие'
+        'wedding': bt.wedding,
+        'corporate': bt.corporate,
+        'birthday': bt.birthday,
+        'festival': bt.festival,
+        'concert': bt.concert,
+        'restaurant': bt.restaurant,
+        'government': bt.government
       };
 
       const result = await createBooking({
@@ -156,7 +158,7 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
         eventType: eventTypeMap[formData.eventType] || formData.eventType,
         eventDate: formData.date,
         eventTime: formData.time || undefined,
-        eventDuration: parseFloat(formData.duration) * 60, // конвертируем в минуты
+        eventDuration: parseFloat(formData.duration) * 60,
         eventLocation: formData.location,
         eventCity: formData.city || undefined,
         guestCount: formData.guestCount ? parseInt(formData.guestCount) : undefined,
@@ -169,19 +171,19 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
         setStep(5);
         setTimeout(() => {
           onConfirm();
-          toast.success('Бронирование создано!', {
-            description: 'Проверьте раздел "Мои бронирования"'
+          toast.success(bt.bookingCreated, {
+            description: bt.bookingCreatedDesc
           });
         }, 2000);
       } else {
-        toast.error('Ошибка создания бронирования', {
-          description: result.error || 'Попробуйте позже'
+        toast.error(bt.error, {
+          description: result.error
         });
       }
     } catch (error: any) {
       console.error('Booking error:', error);
-      toast.error('Ошибка', {
-        description: error.message || 'Не удалось создать бронирование'
+      toast.error(bt.error, {
+        description: error.message
       });
     } finally {
       setIsSubmitting(false);
@@ -193,9 +195,9 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
       <Card className="w-full max-w-5xl max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between border-b sticky top-0 bg-card z-10">
           <div>
-            <h2>Умное бронирование</h2>
+            <h2>{bt.smartBooking}</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Шаг {step} из 5 • Защита эскроу + Смарт-контракт
+              {bt.step} {step} {bt.of} 5 • {bt.escrowSmartContract}
             </p>
           </div>
           <Button variant="ghost" size="icon" onClick={onClose}>
@@ -216,11 +218,11 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
               <div className="text-sm text-muted-foreground flex items-center gap-2">
                 <Badge variant="secondary">{artist.genres[0]}</Badge>
                 <span>⭐ {artist.rating}</span>
-                <span>• {artist.bookingCount} выступлений</span>
+                <span>• {artist.bookingCount} {bt.performances}</span>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-sm text-muted-foreground">От</div>
+              <div className="text-sm text-muted-foreground">{bt.from}</div>
               <div className="text-xl">{basePrice.toLocaleString()} ₸</div>
             </div>
           </div>
@@ -230,28 +232,28 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
             <div className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="eventType">Тип мероприятия *</Label>
+                  <Label htmlFor="eventType">{bt.eventType}</Label>
                   <Select
                     value={formData.eventType}
                     onValueChange={(value) => setFormData({ ...formData, eventType: value })}
                   >
                     <SelectTrigger id="eventType" className="mt-2">
-                      <SelectValue placeholder="Выберите тип" />
+                      <SelectValue placeholder={bt.selectType} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="wedding">Свадьба</SelectItem>
-                      <SelectItem value="corporate">Корпоратив</SelectItem>
-                      <SelectItem value="birthday">День рождения</SelectItem>
-                      <SelectItem value="festival">Фестиваль</SelectItem>
-                      <SelectItem value="concert">Концерт</SelectItem>
-                      <SelectItem value="restaurant">Ресторан</SelectItem>
-                      <SelectItem value="government">Государственное мероприятие</SelectItem>
+                      <SelectItem value="wedding">{bt.wedding}</SelectItem>
+                      <SelectItem value="corporate">{bt.corporate}</SelectItem>
+                      <SelectItem value="birthday">{bt.birthday}</SelectItem>
+                      <SelectItem value="festival">{bt.festival}</SelectItem>
+                      <SelectItem value="concert">{bt.concert}</SelectItem>
+                      <SelectItem value="restaurant">{bt.restaurant}</SelectItem>
+                      <SelectItem value="government">{bt.government}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
-                  <Label htmlFor="date">Дата мероприятия *</Label>
+                  <Label htmlFor="date">{bt.date}</Label>
                   <Input
                     id="date"
                     type="date"
@@ -265,7 +267,7 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="time">Время начала</Label>
+                  <Label htmlFor="time">{bt.startTime}</Label>
                   <Input
                     id="time"
                     type="time"
@@ -276,7 +278,7 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
                 </div>
 
                 <div>
-                  <Label htmlFor="duration">Длительность</Label>
+                  <Label htmlFor="duration">{bt.duration}</Label>
                   <Select
                     value={formData.duration}
                     onValueChange={(value) => setFormData({ ...formData, duration: value })}
@@ -285,26 +287,26 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">1 час</SelectItem>
-                      <SelectItem value="2">2 часа</SelectItem>
-                      <SelectItem value="3">3 часа (стандарт)</SelectItem>
-                      <SelectItem value="4">4 часа</SelectItem>
-                      <SelectItem value="6">6 часов</SelectItem>
-                      <SelectItem value="8">Весь день</SelectItem>
+                      <SelectItem value="1">{bt.hour1}</SelectItem>
+                      <SelectItem value="2">{bt.hour2}</SelectItem>
+                      <SelectItem value="3">{bt.hour3std}</SelectItem>
+                      <SelectItem value="4">{bt.hour4}</SelectItem>
+                      <SelectItem value="6">{bt.hour6}</SelectItem>
+                      <SelectItem value="8">{bt.hour8}</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Цена пересчитается автоматически
+                    {bt.priceRecalc}
                   </p>
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="city">Город *</Label>
+                  <Label htmlFor="city">{bt.city}</Label>
                   <Input
                     id="city"
-                    placeholder="Алматы, Астана..."
+                    placeholder={bt.cityPlaceholder}
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     className="mt-2"
@@ -312,11 +314,11 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
                 </div>
 
                 <div>
-                  <Label htmlFor="guestCount">Количество гостей</Label>
+                  <Label htmlFor="guestCount">{bt.guestCount}</Label>
                   <Input
                     id="guestCount"
                     type="number"
-                    placeholder="Примерное количество"
+                    placeholder={bt.guestCountPlaceholder}
                     value={formData.guestCount}
                     onChange={(e) => setFormData({ ...formData, guestCount: e.target.value })}
                     className="mt-2"
@@ -326,10 +328,10 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
               </div>
 
               <div>
-                <Label htmlFor="location">Место проведения *</Label>
+                <Label htmlFor="location">{bt.location}</Label>
                 <Input
                   id="location"
-                  placeholder="Адрес или название заведения"
+                  placeholder={bt.addressPlaceholder}
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   className="mt-2"
@@ -337,10 +339,10 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
               </div>
 
               <div>
-                <Label htmlFor="notes">Дополнительные пожелания</Label>
+                <Label htmlFor="notes">{bt.additionalNotes}</Label>
                 <Textarea
                   id="notes"
-                  placeholder="Особые требования, репертуар, технические детали..."
+                  placeholder={bt.notesPlaceholder}
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   className="mt-2 min-h-[100px]"
@@ -352,7 +354,7 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
                 onClick={() => setStep(2)}
                 disabled={!formData.eventType || !formData.date || !formData.location || !formData.city}
               >
-                Далее: Дополнительные услуги
+                {bt.nextServices}
               </Button>
             </div>
           )}
@@ -361,9 +363,9 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
           {step === 2 && (
             <div className="space-y-6">
               <div>
-                <h3 className="mb-2">Дополнительные услуги</h3>
+                <h3 className="mb-2">{bt.additionalServices}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Сохраните полный продакшн для вашего мероприятия
+                  {bt.additionalServicesDesc}
                 </p>
               </div>
 
@@ -402,10 +404,10 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-1">
-                            <div className="font-medium">{service.name}</div>
+                            <div className="font-medium">{bt[service.nameKey]}</div>
                             <div className="font-medium">{service.price.toLocaleString()} ₸</div>
                           </div>
-                          <p className="text-sm text-muted-foreground">{service.description}</p>
+                          <p className="text-sm text-muted-foreground">{bt[service.descKey]}</p>
                         </div>
                         {isSelected && (
                           <Check className="w-5 h-5 text-purple-600 flex-shrink-0" />
@@ -421,10 +423,10 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
                   <Zap className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <div className="font-medium text-blue-900 dark:text-blue-100 mb-1">
-                      AI рекомендует
+                      {bt.aiRecommends}
                     </div>
                     <div className="text-sm text-blue-700 dark:text-blue-300">
-                      Для {formData.eventType === 'wedding' ? 'свадьбы' : 'корпоратива'} на {formData.guestCount || '100+'} человек рекомендуем добавить звук и свет
+                      {bt.aiRecommendsFor} {formData.eventType === 'wedding' ? bt.wedding : bt.corporate}
                     </div>
                   </div>
                 </div>
@@ -432,13 +434,13 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
 
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setStep(1)} className="flex-1">
-                  Назад
+                  {bt.back}
                 </Button>
                 <Button
                   className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                   onClick={() => setStep(3)}
                 >
-                  Далее: Контактные данные
+                  {bt.nextContact}
                 </Button>
               </div>
             </div>
@@ -448,10 +450,10 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
           {step === 3 && (
             <div className="space-y-6">
               <div>
-                <Label htmlFor="name">Ваше имя *</Label>
+                <Label htmlFor="name">{bt.yourName}</Label>
                 <Input
                   id="name"
-                  placeholder="Как к вам обращаться"
+                  placeholder={bt.namePlaceholder}
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="mt-2"
@@ -459,11 +461,11 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
               </div>
 
               <div>
-                <Label htmlFor="phone">Телефон *</Label>
+                <Label htmlFor="phone">{bt.phone}</Label>
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="+7 (___) ___-__-__"
+                  placeholder={bt.phonePlaceholder}
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="mt-2"
@@ -471,7 +473,7 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
               </div>
 
               <div>
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email">{bt.email}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -484,14 +486,14 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
 
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setStep(2)} className="flex-1">
-                  Назад
+                  {bt.back}
                 </Button>
                 <Button
                   className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                   onClick={() => setStep(4)}
                   disabled={!formData.name || !formData.phone || !formData.email}
                 >
-                  Далее: Оплата и контракт
+                  {bt.nextPayment}
                 </Button>
               </div>
             </div>
@@ -500,42 +502,40 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
           {/* Step 4: Payment & Contract */}
           {step === 4 && (
             <div className="space-y-6">
-              {/* Price Breakdown */}
               <Card>
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-purple-600" />
-                    <h3>Детализация стоимости</h3>
+                    <h3>{bt.priceBreakdown}</h3>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Выступление артиста ({formData.duration}ч)</span>
+                    <span className="text-muted-foreground">{bt.performance} ({formData.duration}ч)</span>
                     <span>{(basePrice * durationMultiplier).toLocaleString()} ₸</span>
                   </div>
                   {formData.selectedServices.map(serviceId => {
                     const service = additionalServices.find(s => s.id === serviceId);
                     return service ? (
                       <div key={serviceId} className="flex justify-between">
-                        <span className="text-muted-foreground">{service.name}</span>
+                        <span className="text-muted-foreground">{bt[service.nameKey]}</span>
                         <span>{service.price.toLocaleString()} ₸</span>
                       </div>
                     ) : null;
                   })}
                   <Separator />
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Услуги платформы (3%)</span>
+                    <span className="text-muted-foreground">{bt.platformServices}</span>
                     <span>{escrowFee.toLocaleString()} ₸</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between text-lg">
-                    <span>Итого</span>
+                    <span>{bt.total}</span>
                     <span className="font-semibold">{finalPrice.toLocaleString()} ₸</span>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Escrow Protection */}
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex gap-3 mb-4">
@@ -543,9 +543,9 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
                       <Shield className="w-6 h-6 text-green-600" />
                     </div>
                     <div>
-                      <h4 className="mb-1">Защита эскроу</h4>
+                      <h4 className="mb-1">{bt.escrowProtection}</h4>
                       <p className="text-sm text-muted-foreground">
-                        Деньги блокируются на защищённом счёте до выступления. Автоматическая выплата артисту после мероприятия.
+                        {bt.escrowProtectionDesc}
                       </p>
                     </div>
                   </div>
@@ -556,13 +556,12 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
                       onCheckedChange={(checked) => setFormData({ ...formData, escrowAgreed: checked as boolean })}
                     />
                     <Label htmlFor="escrow" className="text-sm font-normal cursor-pointer">
-                      Я понимаю условия эскроу-депонирования
+                      {bt.understandEscrow}
                     </Label>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Smart Contract */}
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex gap-3 mb-4">
@@ -570,22 +569,22 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
                       <FileText className="w-6 h-6 text-purple-600" />
                     </div>
                     <div>
-                      <h4 className="mb-1">Смарт-контракт</h4>
+                      <h4 className="mb-1">{bt.smartContract}</h4>
                       <p className="text-sm text-muted-foreground mb-3">
-                        Автоматический договор с юридической силой
+                        {bt.smartContractDesc}
                       </p>
                       <ul className="space-y-1 text-sm text-muted-foreground">
                         <li className="flex items-center gap-2">
                           <Check className="w-4 h-4 text-green-600" />
-                          Штраф за срыв: 50% от суммы
+                          {bt.penaltyCancel}
                         </li>
                         <li className="flex items-center gap-2">
                           <Check className="w-4 h-4 text-green-600" />
-                          Форс-мажор: полный возврат
+                          {bt.forceMajeure}
                         </li>
                         <li className="flex items-center gap-2">
                           <Check className="w-4 h-4 text-green-600" />
-                          Отмена за 7+ дней: возврат 90%
+                          {bt.cancelWeek}
                         </li>
                       </ul>
                     </div>
@@ -597,9 +596,9 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
                       onCheckedChange={(checked) => setFormData({ ...formData, acceptContract: checked as boolean })}
                     />
                     <Label htmlFor="contract" className="text-sm font-normal cursor-pointer">
-                      Я принимаю условия смарт-контракта и{' '}
+                      {bt.acceptContract} {' '}
                       <button type="button" className="text-purple-600 hover:text-purple-700">
-                        Публичной оферты
+                        {bt.publicOffer}
                       </button>
                     </Label>
                   </div>
@@ -608,7 +607,7 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
 
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setStep(3)} className="flex-1" disabled={isSubmitting}>
-                  Назад
+                  {bt.back}
                 </Button>
                 <Button
                   className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
@@ -618,12 +617,12 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
                   {isSubmitting ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Обработка...
+                      {bt.processing}
                     </>
                   ) : (
                     <>
                       <CreditCard className="w-4 h-4 mr-2" />
-                      Оплатить {finalPrice.toLocaleString()} ₸
+                      {bt.pay} {finalPrice.toLocaleString()} ₸
                     </>
                   )}
                 </Button>
@@ -637,34 +636,34 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
               <div className="w-16 h-16 bg-green-100 dark:bg-green-950 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Check className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="mb-2">Бронирование подтверждено!</h3>
+              <h3 className="mb-2">{bt.bookingConfirmed}</h3>
               <p className="text-muted-foreground mb-6">
-                Деньги заблокированы на эскроу-счёте. Контракт создан.
+                {bt.fundsLocked}
               </p>
               
               <Card className="text-left mb-6">
                 <CardContent className="pt-6 space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Артист:</span>
+                    <span className="text-muted-foreground">{bt.artist}</span>
                     <span className="font-medium">{artist.stageName}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Мероприятие:</span>
+                    <span className="text-muted-foreground">{bt.event}</span>
                     <span className="font-medium">{formData.eventType}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Дата:</span>
+                    <span className="text-muted-foreground">{bt.date}:</span>
                     <span className="font-medium">
-                      {new Date(formData.date).toLocaleDateString('ru-RU')}
+                      {new Date(formData.date).toLocaleDateString(language === 'en' ? 'en-US' : 'ru-RU')}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Место:</span>
+                    <span className="text-muted-foreground">{bt.location2}</span>
                     <span className="font-medium">{formData.location}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Оплачено:</span>
+                    <span className="text-muted-foreground">{bt.paid}</span>
                     <span className="text-lg font-semibold text-green-600">
                       {finalPrice.toLocaleString()} ₸
                     </span>
@@ -673,17 +672,17 @@ export function EnhancedBookingModal({ artist, onClose, onConfirm, userId }: Enh
               </Card>
 
               <div className="space-y-2 mb-6">
-                <Button variant="outline" className="w-full" onClick={() => toast.info('Контракт будет доступен в разделе бронирований')}>
+                <Button variant="outline" className="w-full" onClick={() => toast.info(bt.downloadContract)}>
                   <FileText className="w-4 h-4 mr-2" />
-                  Скачать контракт (PDF)
+                  {bt.downloadContract}
                 </Button>
                 <Button variant="outline" className="w-full" onClick={onClose}>
-                  Перейти в мои бронирования
+                  {bt.viewBookings}
                 </Button>
               </div>
 
               <Button onClick={onClose} className="w-full">
-                Закрыть
+                {bt.close}
               </Button>
             </div>
           )}

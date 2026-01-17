@@ -18,6 +18,7 @@ import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { useProfileTranslation } from '../lib/i18n/useProfileTranslation';
 
 interface ReputationSystemProps {
   userId: string;
@@ -43,41 +44,42 @@ interface Achievement {
 }
 
 export function ReputationSystem({ userId, userRole }: ReputationSystemProps) {
+  const t = useProfileTranslation();
   const overallScore = 96;
   const level = 'Platinum';
   const rank = '5%';
 
   const reputationMetrics: ReputationMetric[] = [
     {
-      name: 'Пунктуальность',
+      name: t.reputation.metrics.punctuality,
       score: 98,
       maxScore: 100,
       icon: Clock,
       color: 'text-green-600'
     },
     {
-      name: 'Качество исполнения',
+      name: t.reputation.metrics.quality,
       score: 95,
       maxScore: 100,
       icon: Music,
       color: 'text-purple-600'
     },
     {
-      name: 'Профессионализм',
+      name: t.reputation.metrics.professionalism,
       score: 97,
       maxScore: 100,
       icon: Award,
       color: 'text-blue-600'
     },
     {
-      name: 'Работа с аудиторией',
+      name: t.reputation.metrics.audienceWork,
       score: 94,
       maxScore: 100,
       icon: Users,
       color: 'text-pink-600'
     },
     {
-      name: 'Техническая подготовка',
+      name: t.reputation.metrics.technicalPrep,
       score: 96,
       maxScore: 100,
       icon: Zap,
@@ -88,21 +90,21 @@ export function ReputationSystem({ userId, userRole }: ReputationSystemProps) {
   const achievements: Achievement[] = [
     {
       id: '1',
-      name: 'Первые шаги',
+      name: t.reputation.achievements.firstSteps,
       description: 'Завершите первое выступление',
       icon: '🎵',
       unlocked: true
     },
     {
       id: '2',
-      name: 'Надёжный артист',
+      name: t.reputation.achievements.reliableArtist,
       description: '10 выступлений без срывов',
       icon: '⭐',
       unlocked: true
     },
     {
       id: '3',
-      name: 'Любимец публики',
+      name: t.reputation.achievements.topRated,
       description: 'Средний рейтинг 4.8+',
       icon: '❤️',
       unlocked: true
@@ -116,7 +118,7 @@ export function ReputationSystem({ userId, userRole }: ReputationSystemProps) {
     },
     {
       id: '5',
-      name: 'Мастер',
+      name: t.reputation.achievements.techMaster,
       description: '50 успешных выступлений',
       icon: '👑',
       unlocked: false,
@@ -141,7 +143,7 @@ export function ReputationSystem({ userId, userRole }: ReputationSystemProps) {
       clientAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Asel',
       rating: 5,
       date: '2026-01-10',
-      event: 'Свадьба',
+      event: t.eventTypes.wedding,
       comment: 'Невероятное выступление! Айгерім создала волшебную атмосферу. Все гости в восторге!',
       metrics: {
         punctuality: 5,
@@ -158,7 +160,7 @@ export function ReputationSystem({ userId, userRole }: ReputationSystemProps) {
       rating: 5,
       date: '2025-12-20',
       event: 'Корпоратив',
-      comment: 'Профессионализм на высшем уровне. Программа была идеально подобрана под аудиторию.',
+      comment: 'Профессионализм на высшем уровне. Программа была идеально подобрана под ау��иторию.',
       metrics: {
         punctuality: 5,
         quality: 5,

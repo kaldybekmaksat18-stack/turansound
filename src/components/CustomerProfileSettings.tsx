@@ -47,6 +47,7 @@ import { Switch } from './ui/switch';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { toast } from 'sonner@2.0.3';
 import { useCustomerProfile } from '../hooks/useCustomerProfile';
+import { useProfileTranslation } from '../lib/i18n/useProfileTranslation';
 
 interface CustomerProfileSettingsProps {
   customerId: string;
@@ -57,6 +58,9 @@ export function CustomerProfileSettings({ customerId, onNavigate }: CustomerProf
   const [activeTab, setActiveTab] = useState('basic');
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Подключаем переводы
+  const t = useProfileTranslation();
   
   // Используем хук для работы с профилем
   const { profile: dbProfile, loading, error: dbError, saveProfile } = useCustomerProfile(customerId);
@@ -159,8 +163,8 @@ export function CustomerProfileSettings({ customerId, onNavigate }: CustomerProf
         description: 'Изменения сохранены успешно'
       });
     } catch (error) {
-      toast.error('Ошибка сохранения', {
-        description: 'Не удалось сохранить изменения'
+      toast.error(t.common.saving, {
+        description: t.customerSettings.saving || t.common.saving
       });
     } finally {
       setIsSaving(false);
@@ -201,21 +205,26 @@ export function CustomerProfileSettings({ customerId, onNavigate }: CustomerProf
               {isEditing ? (
                 <>
                   <Button variant="outline" onClick={() => setIsEditing(false)}>
-                    Отмена
+                    {t.common.cancel}
                   </Button>
-                  <Button onClick={handleSave} className="bg-gradient-to-r from-blue-600 to-purple-600">
+                  <Button onClick={handleSave} className="bg-gradient-to-r from-blue-600 to-purple-600" disabled={isSaving}>
                     {isSaving ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {t.common.saving}
+                      </>
                     ) : (
-                      <Check className="w-4 h-4 mr-2" />
+                      <>
+                        <Check className="w-4 h-4 mr-2" />
+                        {t.common.save}
+                      </>
                     )}
-                    Сохранить
                   </Button>
                 </>
               ) : (
                 <Button onClick={() => setIsEditing(true)} className="bg-gradient-to-r from-blue-600 to-purple-600">
                   <Edit className="w-4 h-4 mr-2" />
-                  Редактировать
+                  {t.common.edit}
                 </Button>
               )}
             </div>
@@ -377,12 +386,12 @@ export function CustomerProfileSettings({ customerId, onNavigate }: CustomerProf
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="almaty">Алматы</SelectItem>
-                        <SelectItem value="astana">Астана</SelectItem>
-                        <SelectItem value="shymkent">Шымкент</SelectItem>
-                        <SelectItem value="karaganda">Караганда</SelectItem>
-                        <SelectItem value="tashkent">Ташкент</SelectItem>
-                        <SelectItem value="bishkek">Бишкек</SelectItem>
+                        <SelectItem value="almaty">{t.cities.almaty}</SelectItem>
+                        <SelectItem value="astana">{t.cities.astana}</SelectItem>
+                        <SelectItem value="shymkent">{t.cities.shymkent}</SelectItem>
+                        <SelectItem value="karaganda">{t.cities.karaganda}</SelectItem>
+                        <SelectItem value="tashkent">{t.cities.tashkent}</SelectItem>
+                        <SelectItem value="bishkek">{t.cities.bishkek}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

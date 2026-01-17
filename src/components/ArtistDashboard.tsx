@@ -10,6 +10,7 @@ import {
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { useProfileTranslation } from '../lib/i18n/useProfileTranslation';
 
 interface ArtistDashboardProps {
   onNavigate: (page: string) => void;
@@ -17,13 +18,15 @@ interface ArtistDashboardProps {
 }
 
 export function ArtistDashboard({ onNavigate, userId }: ArtistDashboardProps) {
+  const tp = useProfileTranslation();
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="mb-2">Панель артиста</h1>
+          <h1 className="mb-2">{tp.artistDashboard.title}</h1>
           <p className="text-muted-foreground">
-            Управление профилем, финансами и репутацией
+            {tp.artistDashboard.subtitle}
           </p>
         </div>
 
@@ -34,14 +37,14 @@ export function ArtistDashboard({ onNavigate, userId }: ArtistDashboardProps) {
             onClick={() => onNavigate('profile-settings')}
           >
             <Users className="w-4 h-4 mr-2" />
-            Редактировать профиль
+            {tp.artistDashboard.editProfile}
           </Button>
           <Button 
             variant="outline"
             onClick={() => onNavigate('bookings')}
           >
             <Calendar className="w-4 h-4 mr-2" />
-            Мои бронирования
+            {tp.artistDashboard.myBookings}
           </Button>
         </div>
 
@@ -58,17 +61,17 @@ export function ArtistDashboard({ onNavigate, userId }: ArtistDashboardProps) {
                 </div>
                 <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
               </div>
-              <h3 className="mb-2">Финансовый профиль</h3>
+              <h3 className="mb-2">{tp.artistDashboard.financialProfile.title}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Доходы, аналитика, налоговые отчёты
+                {tp.artistDashboard.financialProfile.subtitle}
               </p>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Этот месяц</span>
+                  <span className="text-muted-foreground">{tp.artistDashboard.financialProfile.thisMonth}</span>
                   <span className="font-medium">₸650,000</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">На эскроу</span>
+                  <span className="text-muted-foreground">{tp.artistDashboard.financialProfile.onEscrow}</span>
                   <span className="font-medium">₸1,300,000</span>
                 </div>
               </div>
@@ -87,17 +90,17 @@ export function ArtistDashboard({ onNavigate, userId }: ArtistDashboardProps) {
                 </div>
                 <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
               </div>
-              <h3 className="mb-2">Контракты и ЭЦП</h3>
+              <h3 className="mb-2">{tp.artistDashboard.contracts.title}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Смарт-контракты, шаблоны, юридические документы
+                {tp.artistDashboard.contracts.subtitle}
               </p>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Активных</span>
+                  <span className="text-muted-foreground">{tp.artistDashboard.contracts.active}</span>
                   <span className="font-medium">3</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Завершённых</span>
+                  <span className="text-muted-foreground">{tp.artistDashboard.contracts.completed}</span>
                   <span className="font-medium">20</span>
                 </div>
               </div>
@@ -115,20 +118,20 @@ export function ArtistDashboard({ onNavigate, userId }: ArtistDashboardProps) {
                   <Star className="w-6 h-6 text-pink-600" />
                 </div>
                 <Badge className="bg-gradient-to-r from-purple-600 to-pink-600">
-                  Platinum
+                  {tp.artistDashboard.reputation.platinum}
                 </Badge>
               </div>
-              <h3 className="mb-2">Репутация</h3>
+              <h3 className="mb-2">{tp.artistDashboard.reputation.title}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Рейтинг, отзывы, достижения
+                {tp.artistDashboard.reputation.subtitle}
               </p>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Общий балл</span>
+                  <span className="text-muted-foreground">{tp.artistDashboard.reputation.overallScore}</span>
                   <span className="font-medium">96/100</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Отзывов</span>
+                  <span className="text-muted-foreground">{tp.artistDashboard.reputation.reviews}</span>
                   <span className="font-medium">127</span>
                 </div>
               </div>
@@ -147,17 +150,17 @@ export function ArtistDashboard({ onNavigate, userId }: ArtistDashboardProps) {
                 </div>
                 <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
               </div>
-              <h3 className="mb-2">Бронирования</h3>
+              <h3 className="mb-2">{tp.artistDashboard.bookings.title}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Управление заказами и расписанием
+                {tp.artistDashboard.bookings.subtitle}
               </p>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Предстоящих</span>
+                  <span className="text-muted-foreground">{tp.artistDashboard.bookings.upcoming}</span>
                   <span className="font-medium">2</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">В этом месяце</span>
+                  <span className="text-muted-foreground">{tp.artistDashboard.financialProfile.thisMonth}</span>
                   <span className="font-medium">4</span>
                 </div>
               </div>
@@ -222,25 +225,25 @@ export function ArtistDashboard({ onNavigate, userId }: ArtistDashboardProps) {
         {/* Quick Stats */}
         <Card className="mt-6">
           <CardHeader>
-            <h3>Быстрая статистика</h3>
+            <h3>{tp.artistDashboard.stats.rating}</h3>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className="text-3xl mb-2">₸4.8M</div>
-                <div className="text-sm text-muted-foreground">Всего заработано</div>
+                <div className="text-sm text-muted-foreground">{tp.artistDashboard.stats.revenue}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl mb-2">20</div>
-                <div className="text-sm text-muted-foreground">Выступлений</div>
+                <div className="text-sm text-muted-foreground">{tp.artistDashboard.stats.performances}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl mb-2">4.9</div>
-                <div className="text-sm text-muted-foreground">Средний рейтинг</div>
+                <div className="text-sm text-muted-foreground">{tp.artistDashboard.stats.rating}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl mb-2">100%</div>
-                <div className="text-sm text-muted-foreground">Надёжность</div>
+                <div className="text-sm text-muted-foreground">{tp.artistDashboard.reputation.title}</div>
               </div>
             </div>
           </CardContent>

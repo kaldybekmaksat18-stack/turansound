@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Checkbox } from './ui/checkbox';
 import { authHelpers, apiHelpers } from '../utils/supabase/client';
 import { toast } from 'sonner@2.0.3';
+import { useTranslation } from '../lib/i18n/LanguageContext';
 
 interface LoginPageProps {
   onNavigate: (page: string) => void;
@@ -19,6 +20,7 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
       // Call onLogin with user data
       onLogin(user);
 
-      toast.success(`Добро пожаловать, ${user.name}!`);
+      toast.success(t.common.welcomeBack.replace('{name}', user.name));
       onNavigate('home');
     } catch (error: any) {
       console.error('Login error:', error);
@@ -39,16 +41,16 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
       // More helpful error message
       const errorMessage = error.message || '';
       if (errorMessage.includes('Invalid login credentials') || errorMessage.includes('Invalid')) {
-        toast.error('Неверные данные для входа', {
-          description: 'Пользователя с такими данными не существует. Создайте новый аккаунт.',
+        toast.error(t.common.error, {
+          description: t.common.invalidCredentials,
           action: {
-            label: 'Регистрация',
+            label: t.header.register,
             onClick: () => onNavigate('register')
           }
         });
       } else {
-        toast.error('Ошибка входа', {
-          description: errorMessage || 'Проверьте email и пароль'
+        toast.error(t.common.error, {
+          description: errorMessage || t.common.checkEmail
         });
       }
     } finally {
@@ -77,41 +79,41 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
               <Music className="w-8 h-8 text-white" />
             </div>
             <div>
-              <div className="text-2xl font-semibold">TuranSound</div>
-              <div className="text-sm text-muted-foreground">Платформа артистов ЦА</div>
+              <div className="text-2xl font-semibold">{t.header.platformName}</div>
+              <div className="text-sm text-muted-foreground">{t.header.platformSubtitle}</div>
             </div>
           </div>
 
-          <h2 className="mb-4">Добро пожаловать!</h2>
+          <h2 className="mb-4">{t.auth.login.welcome}</h2>
           <p className="text-muted-foreground mb-8 text-lg leading-relaxed">
-            Войдите в свой аккаунт, чтобы управлять бронированиями, просматривать аналитику и находить лучших артистов
+            {t.auth.login.description}
           </p>
 
           <div className="space-y-4">
             <div className="flex gap-3 items-start">
               <div className="w-2 h-2 rounded-full bg-purple-500 mt-2" />
               <div>
-                <div className="font-medium mb-1">Безопасные сделки</div>
+                <div className="font-medium mb-1">{t.auth.login.feature1Title}</div>
                 <div className="text-sm text-muted-foreground">
-                  Эскроу-счета и смарт-контракты
+                  {t.auth.login.feature1Desc}
                 </div>
               </div>
             </div>
             <div className="flex gap-3 items-start">
               <div className="w-2 h-2 rounded-full bg-pink-500 mt-2" />
               <div>
-                <div className="font-medium mb-1">Прозрачный рейтинг</div>
+                <div className="font-medium mb-1">{t.auth.login.feature2Title}</div>
                 <div className="text-sm text-muted-foreground">
-                  Только реальные отзывы после выступлений
+                  {t.auth.login.feature2Desc}
                 </div>
               </div>
             </div>
             <div className="flex gap-3 items-start">
               <div className="w-2 h-2 rounded-full bg-blue-500 mt-2" />
               <div>
-                <div className="font-medium mb-1">AI-помощник</div>
+                <div className="font-medium mb-1">{t.auth.login.feature3Title}</div>
                 <div className="text-sm text-muted-foreground">
-                  Подбор артистов за минуту
+                  {t.auth.login.feature3Desc}
                 </div>
               </div>
             </div>
@@ -121,21 +123,21 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
         {/* Right Side - Login Form */}
         <Card>
           <CardHeader>
-            <h3>Вход в систему</h3>
+            <h3>{t.auth.login.title}</h3>
             <p className="text-sm text-muted-foreground">
-              Введите ваши данные для входа
+              {t.auth.login.subtitle}
             </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t.auth.login.emailLabel}</Label>
                 <div className="relative mt-2">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="your@email.com"
+                    placeholder={t.auth.login.emailPlaceholder}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10"
@@ -146,12 +148,12 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <Label htmlFor="password">Пароль</Label>
+                  <Label htmlFor="password">{t.auth.login.passwordLabel}</Label>
                   <button
                     type="button"
                     className="text-sm text-purple-600 hover:text-purple-700"
                   >
-                    Забыли пароль?
+                    {t.auth.login.forgotPassword}
                   </button>
                 </div>
                 <div className="relative">
@@ -159,7 +161,7 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
                   <Input
                     id="password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder={t.auth.login.passwordPlaceholder}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10"
@@ -175,14 +177,14 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
                   onCheckedChange={(checked) => setRemember(checked as boolean)}
                 />
                 <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
-                  Запомнить меня
+                  {t.auth.login.rememberMe}
                 </Label>
               </div>
 
               {/* Demo credentials helper */}
               <div className="bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800 rounded-lg p-3">
                 <p className="text-xs text-purple-900 dark:text-purple-100 mb-2">
-                  <strong>Для тестирования:</strong> используйте демо-аккаунты или зарегистрируйтесь
+                  <strong>{t.home.demoVersion}:</strong> {t.auth.login.demoHint}
                 </p>
                 <div className="flex gap-2">
                   <Button 
@@ -192,7 +194,7 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
                     onClick={() => fillDemoCredentials('artist')}
                     className="text-xs flex-1 border-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/40"
                   >
-                    Заполнить как Артист
+                    {t.auth.login.fillAsArtist}
                   </Button>
                   <Button 
                     type="button" 
@@ -201,7 +203,7 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
                     onClick={() => fillDemoCredentials('client')}
                     className="text-xs flex-1 border-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/40"
                   >
-                    Заполнить как Заказчик
+                    {t.auth.login.fillAsCustomer}
                   </Button>
                 </div>
               </div>
@@ -215,7 +217,7 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
-                    Войти
+                    {t.auth.login.loginButton}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </>
                 )}
@@ -227,7 +229,7 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-card px-2 text-muted-foreground">
-                    Или войдите через
+                    {t.auth.login.orLoginWith}
                   </span>
                 </div>
               </div>
@@ -263,13 +265,13 @@ export function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
               </div>
 
               <div className="text-center text-sm">
-                <span className="text-muted-foreground">Нет аккаунта? </span>
+                <span className="text-muted-foreground">{t.auth.login.noAccount} </span>
                 <button
                   type="button"
                   onClick={() => onNavigate('register')}
                   className="text-purple-600 hover:text-purple-700 font-medium"
                 >
-                  Зарегистрироваться
+                  {t.auth.login.signUp}
                 </button>
               </div>
             </form>

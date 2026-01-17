@@ -18,6 +18,8 @@ import { Separator } from './ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { mockReviews } from '../data/mockData';
+import { useTranslation } from '../lib/i18n/LanguageContext';
+import { useProfileTranslation } from '../lib/i18n/useProfileTranslation';
 
 interface ArtistProfileProps {
   artist: Artist;
@@ -27,38 +29,8 @@ interface ArtistProfileProps {
 
 export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
   const reviews = mockReviews.filter(r => r.artistId === artist.id);
-
-  const regionNames: Record<string, string> = {
-    almaty: 'Алматы',
-    astana: 'Астана',
-    shymkent: 'Шымкент',
-    karaganda: 'Караганда',
-    aktobe: 'Актобе',
-    tashkent: 'Ташкент',
-    bishkek: 'Бишкек',
-    istanbul: 'Стамбул',
-    moscow: 'Москва',
-    beijing: 'Пекин',
-    'Алматинская область': 'Алматы',
-    'Акмолинская область': 'Астана',
-    'Туркестанская область': 'Шымкент',
-    'Карагандинская область': 'Караганда'
-  };
-
-  const genreNames: Record<string, string> = {
-    pop: 'Поп',
-    rock: 'Рок',
-    jazz: 'Джаз',
-    classical: 'Классика',
-    folk: 'Фолк',
-    electronic: 'Электронная',
-    'hip-hop': 'Хип-хоп',
-    traditional: 'Традиционная',
-    dombra: 'Домбра',
-    kobyz: 'Кобыз',
-    wedding: 'Свадебная',
-    corporate: 'Корпоративная'
-  };
+  const { t } = useTranslation();
+  const tp = useProfileTranslation();
 
   return (
     <div className="min-h-screen bg-background">
@@ -77,7 +49,7 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
           onClick={onBack}
         >
           <ChevronLeft className="w-4 h-4 mr-2" />
-          Назад
+          {tp.artistProfile.back}
         </Button>
       </div>
 
@@ -106,7 +78,7 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
                     <div className="flex flex-wrap gap-2 mb-4">
                       {artist.genres.map((genre) => (
                         <Badge key={genre} variant="secondary">
-                          {genreNames[genre]}
+                          {t.genres[genre as keyof typeof t.genres] || genre}
                         </Badge>
                       ))}
                     </div>
@@ -115,12 +87,12 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
                       <div className="flex items-center gap-1">
                         <Star className="w-5 h-5 fill-yellow-500 text-yellow-500" />
                         <span className="text-lg">{artist.rating}</span>
-                        <span className="text-muted-foreground">({artist.reviewCount} отзывов)</span>
+                        <span className="text-muted-foreground">({artist.reviewCount} {t.artist.reviews_count})</span>
                       </div>
                       <Separator orientation="vertical" className="h-6" />
                       <div className="flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-muted-foreground" />
-                        <span>{regionNames[artist.region]}</span>
+                        <span>{t.regions[artist.region as keyof typeof t.regions] || artist.region}</span>
                       </div>
                     </div>
                   </div>
@@ -131,15 +103,15 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
             {/* Tabs */}
             <Tabs defaultValue="about" className="w-full">
               <TabsList className="w-full justify-start">
-                <TabsTrigger value="about">О себе</TabsTrigger>
-                <TabsTrigger value="portfolio">Портфолио</TabsTrigger>
-                <TabsTrigger value="reviews">Отзывы ({reviews.length})</TabsTrigger>
+                <TabsTrigger value="about">{tp.artistProfile.tabs.about}</TabsTrigger>
+                <TabsTrigger value="portfolio">{tp.artistProfile.tabs.portfolio}</TabsTrigger>
+                <TabsTrigger value="reviews">{tp.artistProfile.tabs.reviews} ({reviews.length})</TabsTrigger>
               </TabsList>
 
               <TabsContent value="about" className="space-y-6 mt-6">
                 <Card>
                   <CardHeader>
-                    <h3>Описание</h3>
+                    <h3>{tp.artistProfile.description}</h3>
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground leading-relaxed">{artist.bio}</p>
@@ -149,7 +121,7 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
                 {(artist as any).specialties && (artist as any).specialties.length > 0 && (
                   <Card>
                     <CardHeader>
-                      <h3>Специализация</h3>
+                      <h3>{tp.artistProfile.specialization}</h3>
                     </CardHeader>
                     <CardContent>
                       <div className="flex flex-wrap gap-2">
@@ -166,7 +138,7 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
                 {(artist as any).equipment && (artist as any).equipment.length > 0 && (
                   <Card>
                     <CardHeader>
-                      <h3>Оборудование</h3>
+                      <h3>{tp.artistProfile.equipment}</h3>
                     </CardHeader>
                     <CardContent>
                       <ul className="space-y-2">
@@ -186,14 +158,14 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
                     <CardContent className="pt-6 text-center">
                       <Award className="w-8 h-8 mx-auto mb-2 text-purple-500" />
                       <div className="text-2xl mb-1">{artist.experience}</div>
-                      <div className="text-sm text-muted-foreground">лет опыта</div>
+                      <div className="text-sm text-muted-foreground">{tp.artistProfile.yearsExperience}</div>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="pt-6 text-center">
                       <Briefcase className="w-8 h-8 mx-auto mb-2 text-pink-500" />
                       <div className="text-2xl mb-1">{artist.bookingCount}</div>
-                      <div className="text-sm text-muted-foreground">выступлений</div>
+                      <div className="text-sm text-muted-foreground">{tp.artistProfile.performances}</div>
                     </CardContent>
                   </Card>
                   {(artist as any).languages && (artist as any).languages.length > 0 && (
@@ -201,7 +173,7 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
                       <CardContent className="pt-6 text-center">
                         <Languages className="w-8 h-8 mx-auto mb-2 text-blue-500" />
                         <div className="text-2xl mb-1">{(artist as any).languages.length}</div>
-                        <div className="text-sm text-muted-foreground">языка</div>
+                        <div className="text-sm text-muted-foreground">{tp.artistProfile.languages}</div>
                       </CardContent>
                     </Card>
                   )}
@@ -211,7 +183,7 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
               <TabsContent value="portfolio" className="space-y-6 mt-6">
                 <Card>
                   <CardHeader>
-                    <h3>Видео выступлений</h3>
+                    <h3>{tp.artistProfile.videoPerformances}</h3>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 gap-4">
@@ -233,7 +205,7 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
 
                 <Card>
                   <CardHeader>
-                    <h3>Фотографии</h3>
+                    <h3>{tp.artistProfile.photos}</h3>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-3 gap-4">
@@ -268,7 +240,7 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
                               <div className="text-sm text-muted-foreground">{review.eventType}</div>
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              {new Date(review.date).toLocaleDateString('ru-RU')}
+                              {new Date(review.date).toLocaleDateString()}
                             </div>
                           </div>
                           <div className="flex items-center gap-1 mb-2">
@@ -298,11 +270,11 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
             {/* Booking Card */}
             <Card className="sticky top-20">
               <CardHeader>
-                <h3>Бронирование</h3>
+                <h3>{tp.artistProfile.bookingCard.title}</h3>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Стоимость</div>
+                  <div className="text-sm text-muted-foreground mb-1">{tp.artistProfile.bookingCard.basePrice}</div>
                   <div className="text-2xl">
                     {(() => {
                       const minPrice = (artist as any).priceRange?.min ?? (artist as any).priceFrom ?? 0;
@@ -310,7 +282,7 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
                       return `${(minPrice / 1000).toLocaleString()} - ${(maxPrice / 1000).toLocaleString()} ₸`;
                     })()}
                   </div>
-                  <div className="text-sm text-muted-foreground mt-1">за выступление</div>
+                  <div className="text-sm text-muted-foreground mt-1">{tp.artistProfile.bookingCard.from}</div>
                 </div>
 
                 <Separator />
@@ -318,7 +290,7 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
                 {(artist as any).languages && (artist as any).languages.length > 0 && (
                   <>
                     <div>
-                      <div className="text-sm text-muted-foreground mb-2">Языки</div>
+                      <div className="text-sm text-muted-foreground mb-2">{t.artist.languages}</div>
                       <div className="flex flex-wrap gap-2">
                         {(artist as any).languages.map((lang: string) => (
                           <Badge key={lang} variant="outline">
@@ -337,11 +309,11 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
                   onClick={() => onBook(artist.id)}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
-                  Забронировать
+                  {tp.artistProfile.bookingCard.book}
                 </Button>
 
                 <Button variant="outline" className="w-full">
-                  Задать вопрос
+                  {tp.artistProfile.bookingCard.contact}
                 </Button>
               </CardContent>
             </Card>
@@ -350,7 +322,7 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
             {(artist as any).availableDates && (artist as any).availableDates.length > 0 && (
               <Card>
                 <CardHeader>
-                  <h3>Ближайшие свободные даты</h3>
+                  <h3>{tp.artistProfile.availableDates.title}</h3>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
@@ -379,4 +351,3 @@ export function ArtistProfile({ artist, onBack, onBook }: ArtistProfileProps) {
     </div>
   );
 }
-

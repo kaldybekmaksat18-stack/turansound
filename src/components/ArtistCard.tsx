@@ -4,6 +4,7 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent, CardFooter } from './ui/card';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { useTranslation } from '../lib/i18n/LanguageContext';
 
 interface ArtistCardProps {
   artist: Artist;
@@ -11,42 +12,23 @@ interface ArtistCardProps {
 }
 
 export function ArtistCard({ artist, onViewProfile }: ArtistCardProps) {
-  const regionNames: Record<string, string> = {
-    almaty: 'Алматы',
-    astana: 'Астана',
-    shymkent: 'Шымкент',
-    karaganda: 'Караганда',
-    aktobe: 'Актобе',
-    tashkent: 'Ташкент',
-    bishkek: 'Бишкек',
-    istanbul: 'Стамбул',
-    moscow: 'Москва',
-    beijing: 'Пекин',
-    // Add new regions for production artists
-    'Алматинская область': 'Алматы',
-    'Акмолинская область': 'Астана',
-    'Туркестанская область': 'Шымкент',
-    'Карагандинская область': 'Караганда'
-  };
-
-  const genreNames: Record<string, string> = {
-    pop: 'Поп',
-    rock: 'Рок',
-    jazz: 'Джаз',
-    classical: 'Классика',
-    folk: 'Фолк',
-    electronic: 'Электронная',
-    'hip-hop': 'Хип-хоп',
-    traditional: 'Традиционная',
-    dombra: 'Домбра',
-    kobyz: 'Кобыз',
-    wedding: 'Свадебная',
-    corporate: 'Корпоративная'
-  };
+  const { t } = useTranslation();
 
   // Check if artist is from database (UUID) or mock data
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const isFromDatabase = uuidRegex.test(artist.id);
+
+  // Get translated region name
+  const getRegionName = (region: string): string => {
+    const regionKey = region.toLowerCase().replace(/[^a-z]/g, '') as keyof typeof t.regions;
+    return t.regions[regionKey] || region;
+  };
+
+  // Get translated genre name
+  const getGenreName = (genre: string): string => {
+    const genreKey = genre.toLowerCase().replace(/[^a-z]/g, '') as keyof typeof t.genres;
+    return t.genres[genreKey] || genre;
+  };
 
   return (
     <Card className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group">
@@ -63,7 +45,7 @@ export function ArtistCard({ artist, onViewProfile }: ArtistCardProps) {
           {((artist as any).verified || (artist as any).isVerified) && (
             <div className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs flex items-center gap-1">
               <BadgeCheck className="w-3 h-3" />
-              Проверен
+              {t.artistCard.verified}
             </div>
           )}
         </div>
@@ -80,7 +62,7 @@ export function ArtistCard({ artist, onViewProfile }: ArtistCardProps) {
             <h3 className="truncate mb-1">{artist.stageName}</h3>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <MapPin className="w-3 h-3" />
-              {regionNames[artist.region]}
+              {getRegionName(artist.region)}
             </div>
           </div>
         </div>
@@ -91,17 +73,17 @@ export function ArtistCard({ artist, onViewProfile }: ArtistCardProps) {
             <span className="text-sm">{artist.rating}</span>
           </div>
           <span className="text-sm text-muted-foreground">
-            {artist.reviewCount} отзывов
+            {artist.reviewCount} {t.artist.reviews_count}
           </span>
           <span className="text-sm text-muted-foreground">
-            • {artist.bookingCount} букингов
+            • {artist.bookingCount} {t.booking.myBookings.toLowerCase()}
           </span>
         </div>
 
         <div className="flex flex-wrap gap-1 mb-3">
           {artist.genres.slice(0, 3).map((genre) => (
             <Badge key={genre} variant="secondary" className="text-xs">
-              {genreNames[genre]}
+              {getGenreName(genre)}
             </Badge>
           ))}
         </div>
@@ -126,7 +108,7 @@ export function ArtistCard({ artist, onViewProfile }: ArtistCardProps) {
           className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
           onClick={() => onViewProfile(artist.id)}
         >
-          Смотреть профиль
+          {t.common.viewProfile}
         </Button>
       </CardFooter>
     </Card>
